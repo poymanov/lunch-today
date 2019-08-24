@@ -15,9 +15,12 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-        <spring.version>5.1.4.RELEASE</spring.version>
-        <spring-data-jpa.version>2.1.5.RELEASE</spring-data-jpa.version>
-        <jackson-json.version>2.9.8</jackson-json.version>
+        <spring.version>5.1.9.RELEASE</spring.version>
+        <spring-security.version>5.1.6.RELEASE</spring-security.version>
+        <spring-data-jpa.version>2.1.10.RELEASE</spring-data-jpa.version>
+        <jackson-databind.version>2.9.9.3</jackson-databind.version>
+        <jackson-datatype-hibernate5.version>2.9.9</jackson-datatype-hibernate5.version>
+        <jackson-datatype-jsr310.version>2.9.9</jackson-datatype-jsr310.version>
         <tomcat.version>9.0.19</tomcat.version>
 
         <!-- Logging -->
@@ -148,17 +151,17 @@
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-web</artifactId>
-            <version>${spring.version}</version>
+            <version>${spring-security.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-config</artifactId>
-            <version>${spring.version}</version>
+            <version>${spring-security.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-taglibs</artifactId>
-            <version>${spring.version}</version>
+            <version>${spring-security.version}</version>
         </dependency>
 
         <!--- ORM -->
@@ -221,17 +224,17 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>${jackson-json.version}</version>
+            <version>${jackson-databind.version}</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-hibernate5</artifactId>
-            <version>${jackson-json.version}</version>
+            <version>${jackson-datatype-hibernate5.version}</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-jsr310</artifactId>
-            <version>${jackson-json.version}</version>
+            <version>${jackson-datatype-jsr310.version}</version>
         </dependency>
 
         <!--Test-->
@@ -263,7 +266,7 @@
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-test</artifactId>
-            <version>${spring.version}</version>
+            <version>${spring-security.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
