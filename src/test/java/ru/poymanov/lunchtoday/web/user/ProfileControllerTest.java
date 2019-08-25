@@ -20,9 +20,9 @@ import static ru.poymanov.lunchtoday.TestUtil.userHttpBasic;
 import static ru.poymanov.lunchtoday.UserTestData.*;
 import static ru.poymanov.lunchtoday.util.exception.ErrorType.VALIDATION_ERROR;
 import static ru.poymanov.lunchtoday.web.ExceptionInfoHandler.EXCEPTION_DUPLICATE_EMAIL;
-import static ru.poymanov.lunchtoday.web.user.ProfileRestController.REST_URL;
+import static ru.poymanov.lunchtoday.web.user.ProfileController.REST_URL;
 
-class ProfileRestControllerTest extends AbstractControllerTest {
+class ProfileControllerTest extends AbstractControllerTest {
 
     @Test
     void testGet() throws Exception {

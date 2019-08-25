@@ -8,8 +8,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
-import ru.poymanov.lunchtoday.repository.JpaUtil;
-import ru.poymanov.lunchtoday.service.UserService;
+import ru.poymanov.lunchtoday.service.user.UserService;
 import ru.poymanov.lunchtoday.util.exception.ErrorType;
 
 import javax.annotation.PostConstruct;
@@ -33,9 +32,6 @@ abstract public class AbstractControllerTest {
     }
 
     protected MockMvc mockMvc;
-
-    @Autowired(required = false)
-    private JpaUtil jpaUtil;
 
     @Autowired
     protected UserService userService;

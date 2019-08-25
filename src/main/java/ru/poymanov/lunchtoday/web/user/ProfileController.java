@@ -15,8 +15,8 @@ import javax.validation.Valid;
 import java.net.URI;
 
 @RestController
-@RequestMapping(ProfileRestController.REST_URL)
-public class ProfileRestController extends AbstractUserController {
+@RequestMapping(ProfileController.REST_URL)
+public class ProfileController extends AbstractUserController {
     static final String REST_URL = "/rest/profile";
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
@@ -45,10 +45,5 @@ public class ProfileRestController extends AbstractUserController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void update(@Valid @RequestBody UserTo userTo, @AuthenticationPrincipal AuthorizedUser authUser) {
         super.update(userTo, authUser.getId());
-    }
-
-    @GetMapping(value = "/text")
-    public String testUTF() {
-        return "Русский текст";
     }
 }

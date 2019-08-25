@@ -3,12 +3,11 @@ package ru.poymanov.lunchtoday.web.user;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import ru.poymanov.lunchtoday.model.AbstractBaseEntity;
 import ru.poymanov.lunchtoday.model.User;
-import ru.poymanov.lunchtoday.service.UserService;
+import ru.poymanov.lunchtoday.service.user.UserService;
 import ru.poymanov.lunchtoday.to.UserTo;
 import ru.poymanov.lunchtoday.util.exception.ModificationRestrictionException;
 

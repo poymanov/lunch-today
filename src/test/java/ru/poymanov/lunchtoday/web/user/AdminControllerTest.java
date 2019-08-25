@@ -22,9 +22,9 @@ import static ru.poymanov.lunchtoday.UserTestData.*;
 import static ru.poymanov.lunchtoday.util.exception.ErrorType.VALIDATION_ERROR;
 import static ru.poymanov.lunchtoday.web.ExceptionInfoHandler.EXCEPTION_DUPLICATE_EMAIL;
 
-class AdminRestControllerTest extends AbstractControllerTest {
+class AdminControllerTest extends AbstractControllerTest {
 
-    private static final String REST_URL = AdminRestController.REST_URL + '/';
+    private static final String REST_URL = AdminController.REST_URL + '/';
 
     @Test
     void testGet() throws Exception {

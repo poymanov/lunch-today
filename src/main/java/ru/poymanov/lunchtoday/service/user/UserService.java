@@ -1,4 +1,4 @@
-package ru.poymanov.lunchtoday.service;
+package ru.poymanov.lunchtoday.service.user;
 
 import ru.poymanov.lunchtoday.model.User;
 import ru.poymanov.lunchtoday.to.UserTo;

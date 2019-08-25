@@ -9,6 +9,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -32,7 +33,7 @@ public class ExceptionInfoHandler {
 
     public static final String EXCEPTION_DUPLICATE_EMAIL = "exception.user.duplicateEmail";
 
-    private static final Map<String, String> CONSTRAINS_I18N_MAP = Map.of(
+    private static final Map<String, String> CONSTRAINS_MAP = Map.of(
             "users_unique_email_idx", EXCEPTION_DUPLICATE_EMAIL);
 
     @Autowired
@@ -50,7 +51,7 @@ public class ExceptionInfoHandler {
         String rootMsg = ValidationUtil.getRootCause(e).getMessage();
         if (rootMsg != null) {
             String lowerCaseMsg = rootMsg.toLowerCase();
-            Optional<Map.Entry<String, String>> entry = CONSTRAINS_I18N_MAP.entrySet().stream()
+            Optional<Map.Entry<String, String>> entry = CONSTRAINS_MAP.entrySet().stream()
                     .filter(it -> lowerCaseMsg.contains(it.getKey()))
                     .findAny();
             if (entry.isPresent()) {
@@ -77,6 +78,12 @@ public class ExceptionInfoHandler {
     @ExceptionHandler({IllegalRequestDataException.class, MethodArgumentTypeMismatchException.class, HttpMessageNotReadableException.class})
     public ErrorInfo illegalRequestDataError(HttpServletRequest req, Exception e) {
         return logAndGetErrorInfo(req, e, false, VALIDATION_ERROR);
+    }
+
+    @ResponseStatus(value = HttpStatus.FORBIDDEN)  // 403
+    @ExceptionHandler({AccessDeniedException.class})
+    public ErrorInfo forbiddenError(HttpServletRequest req, Exception e) {
+        return logAndGetErrorInfo(req, e, false, APP_ERROR);
     }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
