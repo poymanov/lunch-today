@@ -56,7 +56,7 @@ abstract public class AbstractControllerTest {
     }
 
     private String getMessage(String code) {
-        return messageUtil.getMessage(code, MessageUtil.RU_LOCALE);
+        return messageUtil.getMessage(code, MessageUtil.DEFAULT_LOCALE);
     }
 
     public ResultMatcher errorType(ErrorType type) {

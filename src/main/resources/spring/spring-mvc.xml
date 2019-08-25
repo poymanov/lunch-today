@@ -45,11 +45,7 @@
     <bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource"
           p:cacheSeconds="5"
           p:defaultEncoding="UTF-8">
-        <property name="basenames" value="file:///#{systemEnvironment['LUNCHTODAY_ROOT']}/config/messages/app"/>
+        <property name="basenames" value="classpath:/messages/app"/>
         <property name="fallbackToSystemLocale" value="false"/>
-    </bean>
-
-    <bean id="localeResolver" class="org.springframework.web.servlet.i18n.CookieLocaleResolver">
-        <property name="defaultLocale" value="ru"/>
     </bean>
 </beans>
