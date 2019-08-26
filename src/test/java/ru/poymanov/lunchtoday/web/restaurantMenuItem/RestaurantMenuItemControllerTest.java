@@ -13,7 +13,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static ru.poymanov.lunchtoday.RestaurantMenuTestData.RESTAURANT_MENU_1;
+import static ru.poymanov.lunchtoday.RestaurantMenuTestData.MENU_1;
 import static ru.poymanov.lunchtoday.TestUtil.readFromJson;
 import static ru.poymanov.lunchtoday.TestUtil.userHttpBasic;
 import static ru.poymanov.lunchtoday.UserTestData.USER;
@@ -78,7 +78,7 @@ public class RestaurantMenuItemControllerTest extends AbstractControllerTest {
 
     @Test
     void testCreate() throws Exception {
-        RestaurantMenuItem expected = new RestaurantMenuItem(null, "Item 3", RESTAURANT_MENU_1, 300);
+        RestaurantMenuItem expected = new RestaurantMenuItem(null, "Item 3", MENU_1, 300);
         ResultActions action = mockMvc.perform(post(REST_URL)
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(userHttpBasic(ADMIN))
@@ -106,7 +106,7 @@ public class RestaurantMenuItemControllerTest extends AbstractControllerTest {
 
     @Test
     void testCreateForbidden() throws Exception {
-        RestaurantMenuItem expected = new RestaurantMenuItem(null, "Item 3", RESTAURANT_MENU_1, 300);
+        RestaurantMenuItem expected = new RestaurantMenuItem(null, "Item 3", MENU_1, 300);
         mockMvc.perform(post(REST_URL)
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(userHttpBasic(USER))

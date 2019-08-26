@@ -11,11 +11,11 @@ import static ru.poymanov.lunchtoday.TestUtil.readListFromJsonMvcResult;
 import static ru.poymanov.lunchtoday.model.AbstractBaseEntity.START_SEQ;
 
 public class RestaurantMenuTestData {
-    public static final int RESTAURANT_MENU_1_ID = START_SEQ + 4;
-    public static final int RESTAURANT_MENU_2_ID = RESTAURANT_MENU_1_ID + 1;
+    public static final int MENU_1_ID = START_SEQ + 4;
+    public static final int MENU_2_ID = MENU_1_ID + 1;
 
-    public static final RestaurantMenu RESTAURANT_MENU_1 = new RestaurantMenu(RESTAURANT_MENU_1_ID, RestaurantTestData.RESTAURANT_1);
-    public static final RestaurantMenu RESTAURANT_MENU_2 = new RestaurantMenu(RESTAURANT_MENU_2_ID, RestaurantTestData.RESTAURANT_2);
+    public static final RestaurantMenu MENU_1 = new RestaurantMenu(MENU_1_ID, RestaurantTestData.RESTAURANT_1);
+    public static final RestaurantMenu MENU_2 = new RestaurantMenu(MENU_2_ID, RestaurantTestData.RESTAURANT_2);
 
     public static void assertMatch(RestaurantMenu actual, RestaurantMenu expected) {
         assertThat(actual).isEqualToIgnoringGivenFields(expected, "date");

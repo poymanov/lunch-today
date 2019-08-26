@@ -49,11 +49,11 @@ public class RestaurantMenuController {
 
     @Secured("ROLE_ADMIN")
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestaurantMenu> createWithLocation(@Validated(View.Web.class) @RequestBody RestaurantMenu restaurantMenu) {
-        checkNew(restaurantMenu);
+    public ResponseEntity<RestaurantMenu> createWithLocation(@Validated(View.Web.class) @RequestBody RestaurantMenu menu) {
+        checkNew(menu);
 
-        Assert.notNull(restaurantMenu, "restaurant menu must not be null");
-        RestaurantMenu created = repository.save(restaurantMenu);
+        Assert.notNull(menu, "restaurant menu must not be null");
+        RestaurantMenu created = repository.save(menu);
 
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path(REST_URL + "/{id}")
