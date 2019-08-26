@@ -1,4 +1,4 @@
-package ru.poymanov.lunchtoday.web.restaurantMenu;
+package ru.poymanov.lunchtoday.web.restaurantMenuItem;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -10,8 +10,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.poymanov.lunchtoday.View;
-import ru.poymanov.lunchtoday.model.RestaurantMenu;
-import ru.poymanov.lunchtoday.repository.restaurantMenu.RestaurantMenuRepository;
+import ru.poymanov.lunchtoday.model.RestaurantMenuItem;
+import ru.poymanov.lunchtoday.repository.restaurantMenuItem.RestaurantMenuItemRepository;
 
 import java.net.URI;
 import java.util.List;
@@ -19,24 +19,24 @@ import java.util.List;
 import static ru.poymanov.lunchtoday.util.ValidationUtil.*;
 
 @RestController
-@RequestMapping(value = RestaurantMenuController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
-public class RestaurantMenuController {
-    public static final String REST_URL = "/rest/menu";
+@RequestMapping(value = RestaurantMenuItemController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
+public class RestaurantMenuItemController {
+    public static final String REST_URL = "/rest/items";
 
-    private final RestaurantMenuRepository repository;
+    private final RestaurantMenuItemRepository repository;
 
     @Autowired
-    public RestaurantMenuController(RestaurantMenuRepository repository) {
+    public RestaurantMenuItemController(RestaurantMenuItemRepository repository) {
         this.repository = repository;
     }
 
     @GetMapping
-    public List<RestaurantMenu> getAll() {
+    public List<RestaurantMenuItem> getAll() {
         return repository.getAll();
     }
 
     @GetMapping("/{id}")
-    public RestaurantMenu get(@PathVariable int id) {
+    public RestaurantMenuItem get(@PathVariable int id) {
         return checkNotFoundWithId(repository.get(id), id);
     }
 
@@ -49,11 +49,11 @@ public class RestaurantMenuController {
 
     @Secured("ROLE_ADMIN")
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestaurantMenu> createWithLocation(@Validated(View.Web.class) @RequestBody RestaurantMenu restaurantMenu) {
-        checkNew(restaurantMenu);
+    public ResponseEntity<RestaurantMenuItem> createWithLocation(@Validated(View.Web.class) @RequestBody RestaurantMenuItem item) {
+        checkNew(item);
 
-        Assert.notNull(restaurantMenu, "restaurant menu must not be null");
-        RestaurantMenu created = repository.save(restaurantMenu);
+        Assert.notNull(item, "restaurant menu item must not be null");
+        RestaurantMenuItem created = repository.save(item);
 
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path(REST_URL + "/{id}")
@@ -64,10 +64,10 @@ public class RestaurantMenuController {
     @Secured("ROLE_ADMIN")
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
-    public void update(@Validated(View.Web.class) @RequestBody RestaurantMenu restaurantMenu, @PathVariable int id) {
-        assureIdConsistent(restaurantMenu, id);
+    public void update(@Validated(View.Web.class) @RequestBody RestaurantMenuItem item, @PathVariable int id) {
+        assureIdConsistent(item, id);
 
-        Assert.notNull(restaurantMenu, "restaurant menu must not be null");
-        checkNotFoundWithId(repository.save(restaurantMenu), restaurantMenu.getId());
+        Assert.notNull(item, "restaurant menu must not be null");
+        checkNotFoundWithId(repository.save(item), item.getId());
     }
 }

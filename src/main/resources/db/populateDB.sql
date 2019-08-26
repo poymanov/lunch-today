@@ -20,3 +20,9 @@ INSERT INTO restaurants (alias, name) VALUES
 INSERT INTO restaurant_menu (restaurant_id) VALUES
 (100002),
 (100003);
+
+INSERT INTO restaurant_menu_items (restaurant_menu_id, name, price) VALUES
+(100004, 'Item 1', 100),
+(100004, 'Item 2', 200),
+(100005, 'Item 1', 100),
+(100005, 'Item 2', 200);
