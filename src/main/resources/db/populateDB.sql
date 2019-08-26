@@ -1,3 +1,4 @@
+DELETE FROM restaurant_menu;
 DELETE FROM restaurants;
 DELETE FROM user_roles;
 DELETE FROM users;
@@ -15,3 +16,7 @@ INSERT INTO user_roles (role, user_id) VALUES
 INSERT INTO restaurants (alias, name) VALUES
 ('restaurant_1', 'Restaurant #1'),
 ('restaurant_2', 'Restaurant #2');
+
+INSERT INTO restaurant_menu (restaurant_id) VALUES
+(100002),
+(100003);

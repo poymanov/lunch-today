@@ -2,8 +2,6 @@ package ru.poymanov.lunchtoday;
 
 import org.springframework.test.web.servlet.ResultMatcher;
 import ru.poymanov.lunchtoday.model.Restaurant;
-import ru.poymanov.lunchtoday.model.User;
-import ru.poymanov.lunchtoday.web.json.JsonUtil;
 
 import java.util.List;
 
