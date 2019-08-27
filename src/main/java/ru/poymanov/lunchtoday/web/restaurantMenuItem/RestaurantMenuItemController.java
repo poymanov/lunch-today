@@ -5,13 +5,16 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.util.Assert;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.poymanov.lunchtoday.View;
+import ru.poymanov.lunchtoday.model.RestaurantMenu;
 import ru.poymanov.lunchtoday.model.RestaurantMenuItem;
+import ru.poymanov.lunchtoday.repository.restaurantMenu.RestaurantMenuRepository;
 import ru.poymanov.lunchtoday.repository.restaurantMenuItem.RestaurantMenuItemRepository;
+import ru.poymanov.lunchtoday.to.RestaurantMenuItemTo;
+import ru.poymanov.lunchtoday.util.RestaurantMenuItemUtil;
 
 import java.net.URI;
 import java.util.List;
@@ -25,19 +28,23 @@ public class RestaurantMenuItemController {
 
     private final RestaurantMenuItemRepository repository;
 
+    private final RestaurantMenuRepository repositoryMenu;
+
     @Autowired
-    public RestaurantMenuItemController(RestaurantMenuItemRepository repository) {
+    public RestaurantMenuItemController(RestaurantMenuItemRepository repository, RestaurantMenuRepository repositoryMenu) {
         this.repository = repository;
+        this.repositoryMenu = repositoryMenu;
     }
 
     @GetMapping
-    public List<RestaurantMenuItem> getAll() {
-        return repository.getAll();
+    public List<RestaurantMenuItemTo> getAll() {
+        return RestaurantMenuItemUtil.asTo(repository.getAll());
     }
 
     @GetMapping("/{id}")
-    public RestaurantMenuItem get(@PathVariable int id) {
-        return checkNotFoundWithId(repository.get(id), id);
+    public RestaurantMenuItemTo get(@PathVariable int id) {
+        RestaurantMenuItem item = checkNotFoundWithId(repository.get(id), id);
+        return RestaurantMenuItemUtil.asTo(item);
     }
 
     @Secured("ROLE_ADMIN")
@@ -49,25 +56,27 @@ public class RestaurantMenuItemController {
 
     @Secured("ROLE_ADMIN")
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestaurantMenuItem> createWithLocation(@Validated(View.Web.class) @RequestBody RestaurantMenuItem item) {
+    public ResponseEntity<RestaurantMenuItemTo> createWithLocation(@Validated(View.Web.class) @RequestBody RestaurantMenuItemTo item) {
         checkNew(item);
 
-        Assert.notNull(item, "restaurant menu item must not be null");
-        RestaurantMenuItem created = repository.save(item);
+        RestaurantMenu menu = checkNotFoundWithId(repositoryMenu.get(item.getMenuId()), item.getMenuId());
+        repository.save(RestaurantMenuItemUtil.createNewFromTo(item, menu));
 
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path(REST_URL + "/{id}")
-                .buildAndExpand(created.getId()).toUri();
-        return ResponseEntity.created(uriOfNewResource).body(created);
+                .buildAndExpand(item.getId()).toUri();
+        return ResponseEntity.created(uriOfNewResource).body(item);
     }
 
     @Secured("ROLE_ADMIN")
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
-    public void update(@Validated(View.Web.class) @RequestBody RestaurantMenuItem item, @PathVariable int id) {
+    public void update(@Validated(View.Web.class) @RequestBody RestaurantMenuItemTo item, @PathVariable int id) {
         assureIdConsistent(item, id);
 
-        Assert.notNull(item, "restaurant menu must not be null");
-        checkNotFoundWithId(repository.save(item), item.getId());
+        RestaurantMenuItem existedItem = checkNotFoundWithId(repository.get(id), id);
+        RestaurantMenu menu = checkNotFoundWithId(repositoryMenu.get(item.getMenuId()), item.getMenuId());
+
+        checkNotFoundWithId(repository.save(RestaurantMenuItemUtil.updateFromTo(existedItem, item, menu)), item.getId());
     }
 }

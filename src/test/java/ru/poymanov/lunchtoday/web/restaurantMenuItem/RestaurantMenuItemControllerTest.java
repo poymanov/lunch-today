@@ -4,8 +4,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
-import ru.poymanov.lunchtoday.model.RestaurantMenuItem;
 import ru.poymanov.lunchtoday.repository.restaurantMenuItem.RestaurantMenuItemRepository;
+import ru.poymanov.lunchtoday.to.RestaurantMenuItemTo;
+import ru.poymanov.lunchtoday.util.RestaurantMenuItemUtil;
 import ru.poymanov.lunchtoday.web.AbstractControllerTest;
 import ru.poymanov.lunchtoday.web.json.JsonUtil;
 
@@ -13,7 +14,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static ru.poymanov.lunchtoday.RestaurantMenuTestData.MENU_1;
+import static ru.poymanov.lunchtoday.RestaurantMenuTestData.MENU_1_ID;
 import static ru.poymanov.lunchtoday.TestUtil.readFromJson;
 import static ru.poymanov.lunchtoday.TestUtil.userHttpBasic;
 import static ru.poymanov.lunchtoday.UserTestData.USER;
@@ -66,7 +67,7 @@ public class RestaurantMenuItemControllerTest extends AbstractControllerTest {
                 .with(userHttpBasic(ADMIN)))
                 .andDo(print())
                 .andExpect(status().isNoContent());
-        assertMatch(repository.getAll(), ITEM_2, ITEM_3, ITEM_4);
+        assertMatch(RestaurantMenuItemUtil.asTo(repository.getAll()), ITEM_2, ITEM_3, ITEM_4);
     }
 
     @Test
@@ -78,27 +79,27 @@ public class RestaurantMenuItemControllerTest extends AbstractControllerTest {
 
     @Test
     void testCreate() throws Exception {
-        RestaurantMenuItem expected = new RestaurantMenuItem(null, "Item 3", MENU_1, 300);
+        RestaurantMenuItemTo expected = new RestaurantMenuItemTo(null, MENU_1_ID, "Item 3", 300);
         ResultActions action = mockMvc.perform(post(REST_URL)
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(userHttpBasic(ADMIN))
                 .content(JsonUtil.writeValue(expected)))
                 .andExpect(status().isCreated());
 
-        RestaurantMenuItem returned = readFromJson(action, RestaurantMenuItem.class);
+        RestaurantMenuItemTo returned = readFromJson(action, RestaurantMenuItemTo.class);
         expected.setId(returned.getId());
 
         assertMatch(returned, expected);
-        assertMatch(repository.getAll(), ITEM_1, ITEM_2, ITEM_3, ITEM_4, expected);
+        assertMatch(RestaurantMenuItemUtil.asTo(repository.getAll()), ITEM_1, ITEM_2, ITEM_3, ITEM_4, expected);
     }
 
     @Test
     void testCreateInvalid() throws Exception {
-        RestaurantMenuItem expected = new RestaurantMenuItem(null, null, null, null);
+        RestaurantMenuItemTo created = new RestaurantMenuItemTo(null, null, null, null);
         mockMvc.perform(post(REST_URL)
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(userHttpBasic(ADMIN))
-                .content(JsonUtil.writeValue(expected)))
+                .content(JsonUtil.writeValue(created)))
                 .andExpect(status().isUnprocessableEntity())
                 .andExpect(errorType(VALIDATION_ERROR))
                 .andDo(print());
@@ -106,7 +107,7 @@ public class RestaurantMenuItemControllerTest extends AbstractControllerTest {
 
     @Test
     void testCreateForbidden() throws Exception {
-        RestaurantMenuItem expected = new RestaurantMenuItem(null, "Item 3", MENU_1, 300);
+        RestaurantMenuItemTo expected = new RestaurantMenuItemTo(null, MENU_1_ID, "Item 3", 300);
         mockMvc.perform(post(REST_URL)
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(userHttpBasic(USER))
@@ -116,7 +117,7 @@ public class RestaurantMenuItemControllerTest extends AbstractControllerTest {
 
     @Test
     void testUpdate() throws Exception {
-        RestaurantMenuItem updated = new RestaurantMenuItem(ITEM_1);
+        RestaurantMenuItemTo updated = new RestaurantMenuItemTo(ITEM_1);
         updated.setPrice(10);
         mockMvc.perform(put(REST_URL + ITEM_1_ID)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -124,13 +125,13 @@ public class RestaurantMenuItemControllerTest extends AbstractControllerTest {
                 .content(JsonUtil.writeValue(updated)))
                 .andExpect(status().isNoContent());
 
-        assertMatch(repository.get(ITEM_1_ID), updated);
+        assertMatch(RestaurantMenuItemUtil.asTo(repository.get(ITEM_1_ID)), updated);
     }
 
     @Test
     void testUpdateInvalid() throws Exception {
-        RestaurantMenuItem updated = new RestaurantMenuItem(ITEM_1);
-        updated.setMenu(null);
+        RestaurantMenuItemTo updated = new RestaurantMenuItemTo(ITEM_1);
+        updated.setMenuId(null);
         mockMvc.perform(put(REST_URL + ITEM_1_ID)
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(userHttpBasic(ADMIN))
@@ -141,7 +142,7 @@ public class RestaurantMenuItemControllerTest extends AbstractControllerTest {
 
     @Test
     void testUpdateForbidden() throws Exception {
-        RestaurantMenuItem updated = new RestaurantMenuItem(ITEM_1);
+        RestaurantMenuItemTo updated = new RestaurantMenuItemTo(ITEM_1);
         updated.setPrice(10);
         mockMvc.perform(put(REST_URL + ITEM_1_ID)
                 .contentType(MediaType.APPLICATION_JSON)

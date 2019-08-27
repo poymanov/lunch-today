@@ -9,7 +9,7 @@ import javax.validation.constraints.NotNull;
 @Entity
 @Table(name = "restaurant_menu_items", uniqueConstraints = {@UniqueConstraint(columnNames = {"restaurant_menu_id", "name"}, name = "restaurant_menu_items_idx")})
 public class RestaurantMenuItem extends AbstractNamedEntity {
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "restaurant_menu_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @NotNull
