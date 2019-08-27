@@ -1,7 +1,7 @@
 package ru.poymanov.lunchtoday;
 
 import org.springframework.test.web.servlet.ResultMatcher;
-import ru.poymanov.lunchtoday.model.RestaurantMenu;
+import ru.poymanov.lunchtoday.to.RestaurantMenuTo;
 
 import java.util.List;
 
@@ -14,26 +14,26 @@ public class RestaurantMenuTestData {
     public static final int MENU_1_ID = START_SEQ + 4;
     public static final int MENU_2_ID = MENU_1_ID + 1;
 
-    public static final RestaurantMenu MENU_1 = new RestaurantMenu(MENU_1_ID, RestaurantTestData.RESTAURANT_1);
-    public static final RestaurantMenu MENU_2 = new RestaurantMenu(MENU_2_ID, RestaurantTestData.RESTAURANT_2);
+    public static final RestaurantMenuTo MENU_1 = new RestaurantMenuTo(MENU_1_ID, RestaurantTestData.RESTAURANT_1_ID, RestaurantMenuItemTestData.ITEM_1, RestaurantMenuItemTestData.ITEM_2);
+    public static final RestaurantMenuTo MENU_2 = new RestaurantMenuTo(MENU_2_ID, RestaurantTestData.RESTAURANT_2_ID, RestaurantMenuItemTestData.ITEM_3, RestaurantMenuItemTestData.ITEM_4);
 
-    public static void assertMatch(RestaurantMenu actual, RestaurantMenu expected) {
+    public static void assertMatch(RestaurantMenuTo actual, RestaurantMenuTo expected) {
         assertThat(actual).isEqualToIgnoringGivenFields(expected, "date");
     }
 
-    public static void assertMatch(Iterable<RestaurantMenu> actual, RestaurantMenu... expected) {
+    public static void assertMatch(Iterable<RestaurantMenuTo> actual, RestaurantMenuTo... expected) {
         assertMatch(actual, List.of(expected));
     }
 
-    public static void assertMatch(Iterable<RestaurantMenu> actual, Iterable<RestaurantMenu> expected) {
+    public static void assertMatch(Iterable<RestaurantMenuTo> actual, Iterable<RestaurantMenuTo> expected) {
         assertThat(actual).usingElementComparatorIgnoringFields("date").isEqualTo(expected);
     }
 
-    public static ResultMatcher contentJson(RestaurantMenu... expected) {
-        return result -> assertMatch(readListFromJsonMvcResult(result, RestaurantMenu.class), List.of(expected));
+    public static ResultMatcher contentJson(RestaurantMenuTo... expected) {
+        return result -> assertMatch(readListFromJsonMvcResult(result, RestaurantMenuTo.class), List.of(expected));
     }
 
-    public static ResultMatcher contentJson(RestaurantMenu expected) {
-        return result -> assertMatch(readFromJsonMvcResult(result, RestaurantMenu.class), expected);
+    public static ResultMatcher contentJson(RestaurantMenuTo expected) {
+        return result -> assertMatch(readFromJsonMvcResult(result, RestaurantMenuTo.class), expected);
     }
 }

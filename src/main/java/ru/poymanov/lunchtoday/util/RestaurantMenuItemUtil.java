@@ -8,8 +8,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class RestaurantMenuItemUtil {
-
-
     public static RestaurantMenuItemTo asTo(RestaurantMenuItem item) {
         return new RestaurantMenuItemTo(item.getId(), item.getMenu().getId(), item.getName(), item.getPrice());
     }
