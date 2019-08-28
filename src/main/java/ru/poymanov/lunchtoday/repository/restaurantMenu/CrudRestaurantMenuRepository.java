@@ -15,15 +15,19 @@ public interface CrudRestaurantMenuRepository extends JpaRepository<RestaurantMe
     @Override
     Optional<RestaurantMenu> findById(Integer id);
 
+    Optional<RestaurantMenu> findByIdAndRestaurantId(Integer id, Integer restaurantId);
+
     @Override
     List<RestaurantMenu> findAll();
 
+    List<RestaurantMenu> findAllByRestaurantId(Integer restaurantId);
+
     @Transactional
     @Modifying
-    @Query("DELETE FROM RestaurantMenu r WHERE r.id=:id")
-    int delete(@Param("id") int id);
+    @Query("DELETE FROM RestaurantMenu r WHERE r.id=:id AND r.restaurant.id=:restaurantId")
+    int delete(@Param("id") int id, @Param("restaurantId") int restaurantId);
 
     @Override
     @Transactional
-    RestaurantMenu save(RestaurantMenu user);
+    RestaurantMenu save(RestaurantMenu menu);
 }

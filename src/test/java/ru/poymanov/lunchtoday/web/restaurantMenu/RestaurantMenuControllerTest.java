@@ -25,29 +25,27 @@ import static ru.poymanov.lunchtoday.RestaurantMenuTestData.*;
 import static ru.poymanov.lunchtoday.util.exception.ErrorType.VALIDATION_ERROR;
 
 public class RestaurantMenuControllerTest extends AbstractControllerTest {
-    private static final String REST_URL = RestaurantMenuController.REST_URL + '/';
-
     @Autowired
     private RestaurantMenuRepository repository;
 
     @Test
     void testGetUnAuth() throws Exception {
-        mockMvc.perform(get(REST_URL))
+        mockMvc.perform(get(REST_URL_RESTAURANT_1))
                 .andExpect(status().isUnauthorized());
     }
 
     @Test
     void testGetAll() throws Exception {
-        mockMvc.perform(get(REST_URL)
+        mockMvc.perform(get(REST_URL_RESTAURANT_1)
                 .with(userHttpBasic(USER)))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(contentJson(MENU_1, MENU_2));
+                .andExpect(contentJsonAsList(MENU_1));
     }
 
     @Test
     void testGet() throws Exception {
-        mockMvc.perform(get(REST_URL + MENU_1_ID)
+        mockMvc.perform(get(REST_URL_MENU_1)
                 .with(userHttpBasic(USER)))
                 .andExpect(status().isOk())
                 .andDo(print())
@@ -57,7 +55,7 @@ public class RestaurantMenuControllerTest extends AbstractControllerTest {
 
     @Test
     void testGetNotFound() throws Exception {
-        mockMvc.perform(get(REST_URL + 1)
+        mockMvc.perform(get(REST_URL_RESTAURANT_1 + "/" + 1)
                 .with(userHttpBasic(USER)))
                 .andExpect(status().isUnprocessableEntity())
                 .andDo(print());
@@ -65,7 +63,7 @@ public class RestaurantMenuControllerTest extends AbstractControllerTest {
 
     @Test
     void testDelete() throws Exception {
-        mockMvc.perform(delete(REST_URL + MENU_1_ID)
+        mockMvc.perform(delete(REST_URL_MENU_1)
                 .with(userHttpBasic(ADMIN)))
                 .andDo(print())
                 .andExpect(status().isNoContent());
@@ -74,7 +72,7 @@ public class RestaurantMenuControllerTest extends AbstractControllerTest {
 
     @Test
     void testDeleteForbidden() throws Exception {
-        mockMvc.perform(delete(REST_URL + MENU_1_ID)
+        mockMvc.perform(delete(REST_URL_MENU_1)
                 .with(userHttpBasic(USER)))
                 .andExpect(status().isForbidden());
     }
@@ -82,7 +80,7 @@ public class RestaurantMenuControllerTest extends AbstractControllerTest {
     @Test
     void testCreate() throws Exception {
         RestaurantMenuTo expected = new RestaurantMenuTo(null, RESTAURANT_1_ID);
-        ResultActions action = mockMvc.perform(post(REST_URL)
+        ResultActions action = mockMvc.perform(post(REST_URL_RESTAURANT_1)
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(userHttpBasic(ADMIN))
                 .content(JsonUtil.writeValue(expected)))
@@ -98,7 +96,7 @@ public class RestaurantMenuControllerTest extends AbstractControllerTest {
     @Test
     void testCreateInvalid() throws Exception {
         RestaurantMenuTo expected = new RestaurantMenuTo(null, null);
-        mockMvc.perform(post(REST_URL)
+        mockMvc.perform(post(REST_URL_RESTAURANT_1)
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(userHttpBasic(ADMIN))
                 .content(JsonUtil.writeValue(expected)))
@@ -110,7 +108,7 @@ public class RestaurantMenuControllerTest extends AbstractControllerTest {
     @Test
     void testCreateForbidden() throws Exception {
         RestaurantMenuTo expected = new RestaurantMenuTo(null, RESTAURANT_1_ID);
-        mockMvc.perform(post(REST_URL)
+        mockMvc.perform(post(REST_URL_RESTAURANT_1)
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(userHttpBasic(USER))
                 .content(JsonUtil.writeValue(expected)))
@@ -121,7 +119,7 @@ public class RestaurantMenuControllerTest extends AbstractControllerTest {
     void testUpdate() throws Exception {
         RestaurantMenuTo updated = new RestaurantMenuTo(MENU_1);
         updated.setDate(new Date());
-        mockMvc.perform(put(REST_URL + MENU_1_ID)
+        mockMvc.perform(put(REST_URL_MENU_1)
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(userHttpBasic(ADMIN))
                 .content(JsonUtil.writeValue(updated)))
@@ -134,7 +132,7 @@ public class RestaurantMenuControllerTest extends AbstractControllerTest {
     void testUpdateInvalid() throws Exception {
         RestaurantMenuTo updated = new RestaurantMenuTo(MENU_1);
         updated.setRestaurantId(null);
-        mockMvc.perform(put(REST_URL + MENU_1_ID)
+        mockMvc.perform(put(REST_URL_MENU_1)
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(userHttpBasic(ADMIN))
                 .content(JsonUtil.writeValue(updated)))
@@ -146,7 +144,7 @@ public class RestaurantMenuControllerTest extends AbstractControllerTest {
     void testUpdateForbidden() throws Exception {
         RestaurantMenuTo updated = new RestaurantMenuTo(MENU_1);
         updated.setDate(new Date());
-        mockMvc.perform(put(REST_URL + MENU_1_ID)
+        mockMvc.perform(put(REST_URL_MENU_1)
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(userHttpBasic(USER))
                 .content(JsonUtil.writeValue(updated)))

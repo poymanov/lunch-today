@@ -17,8 +17,8 @@ public class RestaurantMenuRepositoryImpl implements RestaurantMenuRepository {
     }
 
     @Override
-    public boolean delete(int id) {
-        return crudRepository.delete(id) != 0;
+    public boolean delete(int id, int restaurantId) {
+        return crudRepository.delete(id, restaurantId) != 0;
     }
 
     @Override
@@ -27,7 +27,17 @@ public class RestaurantMenuRepositoryImpl implements RestaurantMenuRepository {
     }
 
     @Override
+    public RestaurantMenu getByRestaurant(int id, int restaurantId) {
+        return crudRepository.findByIdAndRestaurantId(id, restaurantId).orElse(null);
+    }
+
+    @Override
     public List<RestaurantMenu> getAll() {
         return crudRepository.findAll();
+    }
+
+    @Override
+    public List<RestaurantMenu> getAllByRestaurant(int restaurantId) {
+        return crudRepository.findAllByRestaurantId(restaurantId);
     }
 }

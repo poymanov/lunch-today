@@ -15,6 +15,7 @@ import ru.poymanov.lunchtoday.repository.restaurant.RestaurantRepository;
 import ru.poymanov.lunchtoday.repository.restaurantMenu.RestaurantMenuRepository;
 import ru.poymanov.lunchtoday.to.RestaurantMenuTo;
 import ru.poymanov.lunchtoday.util.RestaurantMenuUtil;
+import ru.poymanov.lunchtoday.web.restaurant.RestaurantController;
 
 import java.net.URI;
 import java.util.List;
@@ -24,7 +25,7 @@ import static ru.poymanov.lunchtoday.util.ValidationUtil.*;
 @RestController
 @RequestMapping(value = RestaurantMenuController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 public class RestaurantMenuController {
-    public static final String REST_URL = "/rest/menu";
+    public static final String REST_URL = RestaurantController.REST_URL + "/{restaurant_id}/menu";
 
     private final RestaurantMenuRepository repository;
     private final RestaurantRepository repositoryRestaurant;
@@ -36,46 +37,46 @@ public class RestaurantMenuController {
     }
 
     @GetMapping
-    public List<RestaurantMenuTo> getAll() {
-        return RestaurantMenuUtil.asTo(repository.getAll());
+    public List<RestaurantMenuTo> getAll(@PathVariable("restaurant_id") int restaurantId) {
+        return RestaurantMenuUtil.asTo(repository.getAllByRestaurant(restaurantId));
     }
 
     @GetMapping("/{id}")
-    public RestaurantMenuTo get(@PathVariable int id) {
-        RestaurantMenu menu = checkNotFoundWithId(repository.get(id), id);
+    public RestaurantMenuTo get(@PathVariable("restaurant_id") int restaurantId, @PathVariable int id) {
+        RestaurantMenu menu = checkNotFoundWithId(repository.getByRestaurant(id, restaurantId), id);
         return RestaurantMenuUtil.asTo(menu);
     }
 
     @Secured("ROLE_ADMIN")
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable int id) {
-        checkNotFoundWithId(repository.delete(id), id);
+    public void delete(@PathVariable("restaurant_id") int restaurantId, @PathVariable int id) {
+        checkNotFoundWithId(repository.delete(id, restaurantId), id);
     }
 
     @Secured("ROLE_ADMIN")
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestaurantMenuTo> createWithLocation(@Validated(View.Web.class) @RequestBody RestaurantMenuTo menu) {
+    public ResponseEntity<RestaurantMenuTo> createWithLocation(@Validated(View.Web.class) @RequestBody RestaurantMenuTo menu, @PathVariable("restaurant_id") int restaurantId) {
         checkNew(menu);
 
-        Restaurant restaurant = checkNotFoundWithId(repositoryRestaurant.get(menu.getRestaurantId()), menu.getRestaurantId());
+        Restaurant restaurant = checkNotFoundWithId(repositoryRestaurant.get(restaurantId), restaurantId);
         RestaurantMenu created = repository.save(new RestaurantMenu(null, restaurant));
         menu.setId(created.getId());
 
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path(REST_URL + "/{id}")
-                .buildAndExpand(menu.getId()).toUri();
+                .buildAndExpand(restaurantId, menu.getId()).toUri();
         return ResponseEntity.created(uriOfNewResource).body(menu);
     }
 
     @Secured("ROLE_ADMIN")
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
-    public void update(@Validated(View.Web.class) @RequestBody RestaurantMenuTo menu, @PathVariable int id) {
+    public void update(@Validated(View.Web.class) @RequestBody RestaurantMenuTo menu, @PathVariable("restaurant_id") int restaurantId, @PathVariable int id) {
         assureIdConsistent(menu, id);
 
         RestaurantMenu existedMenu = checkNotFoundWithId(repository.get(id), id);
-        Restaurant restaurant = checkNotFoundWithId(repositoryRestaurant.get(menu.getRestaurantId()), id);
+        Restaurant restaurant = checkNotFoundWithId(repositoryRestaurant.get(restaurantId), restaurantId);
 
         checkNotFoundWithId(repository.save(RestaurantMenuUtil.updateFromTo(existedMenu, menu, restaurant)), menu.getId());
     }
