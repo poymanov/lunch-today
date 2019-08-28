@@ -13,7 +13,6 @@ public class RestaurantMenuTo extends BaseTo {
     @NotNull
     private Integer restaurantId;
 
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private Date date;
 

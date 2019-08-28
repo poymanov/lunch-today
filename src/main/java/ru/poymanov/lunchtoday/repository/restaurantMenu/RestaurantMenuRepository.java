@@ -15,7 +15,5 @@ public interface RestaurantMenuRepository {
 
     RestaurantMenu getByRestaurant(int id, int restaurantId);
 
-    List<RestaurantMenu> getAll();
-
     List<RestaurantMenu> getAllByRestaurant(int restaurantId);
 }

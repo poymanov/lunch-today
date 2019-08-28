@@ -32,11 +32,6 @@ public class RestaurantMenuRepositoryImpl implements RestaurantMenuRepository {
     }
 
     @Override
-    public List<RestaurantMenu> getAll() {
-        return crudRepository.findAll();
-    }
-
-    @Override
     public List<RestaurantMenu> getAllByRestaurant(int restaurantId) {
         return crudRepository.findAllByRestaurantId(restaurantId);
     }

@@ -25,7 +25,7 @@ import static ru.poymanov.lunchtoday.util.ValidationUtil.*;
 @RestController
 @RequestMapping(value = RestaurantMenuController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 public class RestaurantMenuController {
-    public static final String REST_URL = RestaurantController.REST_URL + "/{restaurant_id}/menu";
+    public static final String REST_URL = RestaurantController.REST_URL + "/{restaurantId}/menu";
 
     private final RestaurantMenuRepository repository;
     private final RestaurantRepository repositoryRestaurant;
@@ -37,12 +37,12 @@ public class RestaurantMenuController {
     }
 
     @GetMapping
-    public List<RestaurantMenuTo> getAll(@PathVariable("restaurant_id") int restaurantId) {
+    public List<RestaurantMenuTo> getAll(@PathVariable int restaurantId) {
         return RestaurantMenuUtil.asTo(repository.getAllByRestaurant(restaurantId));
     }
 
     @GetMapping("/{id}")
-    public RestaurantMenuTo get(@PathVariable("restaurant_id") int restaurantId, @PathVariable int id) {
+    public RestaurantMenuTo get(@PathVariable int restaurantId, @PathVariable int id) {
         RestaurantMenu menu = checkNotFoundWithId(repository.getByRestaurant(id, restaurantId), id);
         return RestaurantMenuUtil.asTo(menu);
     }
@@ -50,13 +50,13 @@ public class RestaurantMenuController {
     @Secured("ROLE_ADMIN")
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable("restaurant_id") int restaurantId, @PathVariable int id) {
+    public void delete(@PathVariable int restaurantId, @PathVariable int id) {
         checkNotFoundWithId(repository.delete(id, restaurantId), id);
     }
 
     @Secured("ROLE_ADMIN")
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestaurantMenuTo> createWithLocation(@Validated(View.Web.class) @RequestBody RestaurantMenuTo menu, @PathVariable("restaurant_id") int restaurantId) {
+    public ResponseEntity<RestaurantMenuTo> createWithLocation(@Validated(View.Web.class) @RequestBody RestaurantMenuTo menu, @PathVariable int restaurantId) {
         checkNew(menu);
 
         Restaurant restaurant = checkNotFoundWithId(repositoryRestaurant.get(restaurantId), restaurantId);
@@ -72,7 +72,7 @@ public class RestaurantMenuController {
     @Secured("ROLE_ADMIN")
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
-    public void update(@Validated(View.Web.class) @RequestBody RestaurantMenuTo menu, @PathVariable("restaurant_id") int restaurantId, @PathVariable int id) {
+    public void update(@Validated(View.Web.class) @RequestBody RestaurantMenuTo menu, @PathVariable int restaurantId, @PathVariable int id) {
         assureIdConsistent(menu, id);
 
         RestaurantMenu existedMenu = checkNotFoundWithId(repository.get(id), id);

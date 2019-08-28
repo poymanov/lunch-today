@@ -10,6 +10,7 @@ import ru.poymanov.lunchtoday.util.RestaurantMenuUtil;
 import ru.poymanov.lunchtoday.web.AbstractControllerTest;
 import ru.poymanov.lunchtoday.web.json.JsonUtil;
 
+import java.util.Collections;
 import java.util.Date;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -17,6 +18,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static ru.poymanov.lunchtoday.RestaurantTestData.RESTAURANT_1_ID;
+import static ru.poymanov.lunchtoday.RestaurantTestData.RESTAURANT_2_ID;
 import static ru.poymanov.lunchtoday.TestUtil.readFromJson;
 import static ru.poymanov.lunchtoday.TestUtil.userHttpBasic;
 import static ru.poymanov.lunchtoday.UserTestData.USER;
@@ -67,8 +69,7 @@ public class RestaurantMenuControllerTest extends AbstractControllerTest {
                 .with(userHttpBasic(ADMIN)))
                 .andDo(print())
                 .andExpect(status().isNoContent());
-        // TODO: getAllByRestaurant
-        assertMatch(RestaurantMenuUtil.asTo(repository.getAll()), MENU_2);
+        assertMatch(RestaurantMenuUtil.asTo(repository.getAllByRestaurant(RESTAURANT_1_ID)), Collections.emptyList());
     }
 
     @Test
@@ -91,8 +92,7 @@ public class RestaurantMenuControllerTest extends AbstractControllerTest {
         expected.setId(returned.getId());
 
         assertMatch(returned, expected);
-        // TODO: getAllByRestaurant
-        assertMatch(RestaurantMenuUtil.asTo(repository.getAll()), MENU_1, MENU_2, expected);
+        assertMatch(RestaurantMenuUtil.asTo(repository.getAllByRestaurant(RESTAURANT_1_ID)), MENU_1, expected);
     }
 
     @Test
@@ -127,8 +127,7 @@ public class RestaurantMenuControllerTest extends AbstractControllerTest {
                 .content(JsonUtil.writeValue(updated)))
                 .andExpect(status().isNoContent());
 
-        // TODO: getByRestaurant
-        assertMatch(RestaurantMenuUtil.asTo(repository.get(MENU_1_ID)), updated);
+        assertMatch(RestaurantMenuUtil.asTo(repository.getByRestaurant(MENU_1_ID, RESTAURANT_1_ID)), updated);
     }
 
     @Test
