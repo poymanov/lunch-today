@@ -23,29 +23,27 @@ import static ru.poymanov.lunchtoday.RestaurantMenuItemTestData.*;
 import static ru.poymanov.lunchtoday.util.exception.ErrorType.VALIDATION_ERROR;
 
 public class RestaurantMenuItemControllerTest extends AbstractControllerTest {
-    private static final String REST_URL = RestaurantMenuItemController.REST_URL + '/';
-
     @Autowired
     private RestaurantMenuItemRepository repository;
 
     @Test
     void testGetUnAuth() throws Exception {
-        mockMvc.perform(get(REST_URL))
+        mockMvc.perform(get(REST_URL_MENU_1_ITEMS))
                 .andExpect(status().isUnauthorized());
     }
 
     @Test
     void testGetAll() throws Exception {
-        mockMvc.perform(get(REST_URL)
+        mockMvc.perform(get(REST_URL_MENU_1_ITEMS)
                 .with(userHttpBasic(USER)))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(contentJson(ITEM_1, ITEM_2, ITEM_3, ITEM_4));
+                .andExpect(contentJson(ITEM_1, ITEM_2));
     }
 
     @Test
     void testGet() throws Exception {
-        mockMvc.perform(get(REST_URL + ITEM_1_ID)
+        mockMvc.perform(get(REST_URL_ITEM_1)
                 .with(userHttpBasic(USER)))
                 .andExpect(status().isOk())
                 .andDo(print())
@@ -55,7 +53,7 @@ public class RestaurantMenuItemControllerTest extends AbstractControllerTest {
 
     @Test
     void testGetNotFound() throws Exception {
-        mockMvc.perform(get(REST_URL + 1)
+        mockMvc.perform(get(REST_URL_MENU_1_ITEMS + "/" + 1)
                 .with(userHttpBasic(USER)))
                 .andExpect(status().isUnprocessableEntity())
                 .andDo(print());
@@ -63,16 +61,16 @@ public class RestaurantMenuItemControllerTest extends AbstractControllerTest {
 
     @Test
     void testDelete() throws Exception {
-        mockMvc.perform(delete(REST_URL + ITEM_1_ID)
+        mockMvc.perform(delete(REST_URL_ITEM_1)
                 .with(userHttpBasic(ADMIN)))
                 .andDo(print())
                 .andExpect(status().isNoContent());
-        assertMatch(RestaurantMenuItemUtil.asTo(repository.getAll()), ITEM_2, ITEM_3, ITEM_4);
+        assertMatch(RestaurantMenuItemUtil.asTo(repository.getAllByMenu(MENU_1_ID)), ITEM_2);
     }
 
     @Test
     void testDeleteForbidden() throws Exception {
-        mockMvc.perform(delete(REST_URL + ITEM_1_ID)
+        mockMvc.perform(delete(REST_URL_ITEM_1)
                 .with(userHttpBasic(USER)))
                 .andExpect(status().isForbidden());
     }
@@ -80,7 +78,7 @@ public class RestaurantMenuItemControllerTest extends AbstractControllerTest {
     @Test
     void testCreate() throws Exception {
         RestaurantMenuItemTo expected = new RestaurantMenuItemTo(null, MENU_1_ID, "Item 3", 300);
-        ResultActions action = mockMvc.perform(post(REST_URL)
+        ResultActions action = mockMvc.perform(post(REST_URL_MENU_1_ITEMS)
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(userHttpBasic(ADMIN))
                 .content(JsonUtil.writeValue(expected)))
@@ -90,13 +88,13 @@ public class RestaurantMenuItemControllerTest extends AbstractControllerTest {
         expected.setId(returned.getId());
 
         assertMatch(returned, expected);
-        assertMatch(RestaurantMenuItemUtil.asTo(repository.getAll()), ITEM_1, ITEM_2, ITEM_3, ITEM_4, expected);
+        assertMatch(RestaurantMenuItemUtil.asTo(repository.getAllByMenu(MENU_1_ID)), ITEM_1, ITEM_2, expected);
     }
 
     @Test
     void testCreateInvalid() throws Exception {
         RestaurantMenuItemTo created = new RestaurantMenuItemTo(null, null, null, null);
-        mockMvc.perform(post(REST_URL)
+        mockMvc.perform(post(REST_URL_MENU_1_ITEMS)
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(userHttpBasic(ADMIN))
                 .content(JsonUtil.writeValue(created)))
@@ -108,7 +106,7 @@ public class RestaurantMenuItemControllerTest extends AbstractControllerTest {
     @Test
     void testCreateForbidden() throws Exception {
         RestaurantMenuItemTo expected = new RestaurantMenuItemTo(null, MENU_1_ID, "Item 3", 300);
-        mockMvc.perform(post(REST_URL)
+        mockMvc.perform(post(REST_URL_MENU_1_ITEMS)
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(userHttpBasic(USER))
                 .content(JsonUtil.writeValue(expected)))
@@ -119,20 +117,20 @@ public class RestaurantMenuItemControllerTest extends AbstractControllerTest {
     void testUpdate() throws Exception {
         RestaurantMenuItemTo updated = new RestaurantMenuItemTo(ITEM_1);
         updated.setPrice(10);
-        mockMvc.perform(put(REST_URL + ITEM_1_ID)
+        mockMvc.perform(put(REST_URL_ITEM_1)
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(userHttpBasic(ADMIN))
                 .content(JsonUtil.writeValue(updated)))
                 .andExpect(status().isNoContent());
 
-        assertMatch(RestaurantMenuItemUtil.asTo(repository.get(ITEM_1_ID)), updated);
+        assertMatch(RestaurantMenuItemUtil.asTo(repository.getByMenu(ITEM_1_ID, MENU_1_ID)), updated);
     }
 
     @Test
     void testUpdateInvalid() throws Exception {
         RestaurantMenuItemTo updated = new RestaurantMenuItemTo(ITEM_1);
         updated.setMenuId(null);
-        mockMvc.perform(put(REST_URL + ITEM_1_ID)
+        mockMvc.perform(put(REST_URL_ITEM_1)
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(userHttpBasic(ADMIN))
                 .content(JsonUtil.writeValue(updated)))
@@ -144,7 +142,7 @@ public class RestaurantMenuItemControllerTest extends AbstractControllerTest {
     void testUpdateForbidden() throws Exception {
         RestaurantMenuItemTo updated = new RestaurantMenuItemTo(ITEM_1);
         updated.setPrice(10);
-        mockMvc.perform(put(REST_URL + ITEM_1_ID)
+        mockMvc.perform(put(REST_URL_ITEM_1)
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(userHttpBasic(USER))
                 .content(JsonUtil.writeValue(updated)))

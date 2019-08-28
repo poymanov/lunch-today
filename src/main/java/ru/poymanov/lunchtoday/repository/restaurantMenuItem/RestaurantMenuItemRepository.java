@@ -8,10 +8,12 @@ public interface RestaurantMenuItemRepository {
     RestaurantMenuItem save(RestaurantMenuItem restaurant);
 
     // false if not found
-    boolean delete(int id);
+    boolean delete(int id, int menuId);
 
     // null if not found
     RestaurantMenuItem get(int id);
 
-    List<RestaurantMenuItem> getAll();
+    RestaurantMenuItem getByMenu(int id, int menuId);
+
+    List<RestaurantMenuItem> getAllByMenu(int menuId);
 }

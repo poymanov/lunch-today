@@ -67,6 +67,7 @@ public class RestaurantMenuControllerTest extends AbstractControllerTest {
                 .with(userHttpBasic(ADMIN)))
                 .andDo(print())
                 .andExpect(status().isNoContent());
+        // TODO: getAllByRestaurant
         assertMatch(RestaurantMenuUtil.asTo(repository.getAll()), MENU_2);
     }
 
@@ -90,6 +91,7 @@ public class RestaurantMenuControllerTest extends AbstractControllerTest {
         expected.setId(returned.getId());
 
         assertMatch(returned, expected);
+        // TODO: getAllByRestaurant
         assertMatch(RestaurantMenuUtil.asTo(repository.getAll()), MENU_1, MENU_2, expected);
     }
 
@@ -125,6 +127,7 @@ public class RestaurantMenuControllerTest extends AbstractControllerTest {
                 .content(JsonUtil.writeValue(updated)))
                 .andExpect(status().isNoContent());
 
+        // TODO: getByRestaurant
         assertMatch(RestaurantMenuUtil.asTo(repository.get(MENU_1_ID)), updated);
     }
 
