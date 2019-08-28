@@ -5,18 +5,18 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.util.Assert;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.poymanov.lunchtoday.View;
 import ru.poymanov.lunchtoday.model.Restaurant;
 import ru.poymanov.lunchtoday.repository.restaurant.RestaurantRepository;
+import ru.poymanov.lunchtoday.to.RestaurantTo;
+import ru.poymanov.lunchtoday.util.RestaurantUtil;
 
 import java.net.URI;
 import java.util.List;
 
-import static ru.poymanov.lunchtoday.util.RestaurantUtil.prepareToSave;
 import static ru.poymanov.lunchtoday.util.ValidationUtil.*;
 
 @RestController
@@ -32,13 +32,14 @@ public class RestaurantController {
     }
 
     @GetMapping
-    public List<Restaurant> getAll() {
-        return repository.getAll();
+    public List<RestaurantTo> getAll() {
+        return RestaurantUtil.asTo(repository.getAll());
     }
 
     @GetMapping("/{id}")
-    public Restaurant get(@PathVariable int id) {
-        return checkNotFoundWithId(repository.get(id), id);
+    public RestaurantTo get(@PathVariable int id) {
+        Restaurant restaurant = checkNotFoundWithId(repository.get(id), id);
+        return RestaurantUtil.asTo(restaurant);
     }
 
     @Secured("ROLE_ADMIN")
@@ -50,25 +51,26 @@ public class RestaurantController {
 
     @Secured("ROLE_ADMIN")
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Restaurant> createWithLocation(@Validated(View.Web.class) @RequestBody Restaurant restaurant) {
+    public ResponseEntity<RestaurantTo> createWithLocation(@Validated(View.Web.class) @RequestBody RestaurantTo restaurant) {
         checkNew(restaurant);
 
-        Assert.notNull(restaurant, "restaurant must not be null");
-        Restaurant created = repository.save(prepareToSave(restaurant));
+        Restaurant created = repository.save(RestaurantUtil.createNewFromTo(restaurant));
+        restaurant.setId(created.getId());
 
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path(REST_URL + "/{id}")
-                .buildAndExpand(created.getId()).toUri();
-        return ResponseEntity.created(uriOfNewResource).body(created);
+                .buildAndExpand(restaurant.getId()).toUri();
+        return ResponseEntity.created(uriOfNewResource).body(restaurant);
     }
 
     @Secured("ROLE_ADMIN")
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
-    public void update(@Validated(View.Web.class) @RequestBody Restaurant restaurant, @PathVariable int id) {
+    public void update(@Validated(View.Web.class) @RequestBody RestaurantTo restaurant, @PathVariable int id) {
         assureIdConsistent(restaurant, id);
 
-        Assert.notNull(restaurant, "restaurant must not be null");
-        checkNotFoundWithId(repository.save(prepareToSave(restaurant)), restaurant.getId());
+        Restaurant existedItem = checkNotFoundWithId(repository.get(id), id);
+
+        checkNotFoundWithId(repository.save(RestaurantUtil.updateFromTo(existedItem, restaurant)), restaurant.getId());
     }
 }

@@ -13,9 +13,9 @@ INSERT INTO user_roles (role, user_id) VALUES
   ('ROLE_ADMIN', 100001),
   ('ROLE_USER', 100001);
 
-INSERT INTO restaurants (alias, name) VALUES
-('restaurant_1', 'Restaurant #1'),
-('restaurant_2', 'Restaurant #2');
+INSERT INTO restaurants (name) VALUES
+('Restaurant #1'),
+('Restaurant #2');
 
 INSERT INTO restaurant_menu (restaurant_id) VALUES
 (100002),

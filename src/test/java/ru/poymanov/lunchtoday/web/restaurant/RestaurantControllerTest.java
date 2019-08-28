@@ -4,8 +4,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
-import ru.poymanov.lunchtoday.model.Restaurant;
 import ru.poymanov.lunchtoday.repository.restaurant.RestaurantRepository;
+import ru.poymanov.lunchtoday.to.RestaurantTo;
+import ru.poymanov.lunchtoday.util.RestaurantUtil;
 import ru.poymanov.lunchtoday.web.AbstractControllerTest;
 import ru.poymanov.lunchtoday.web.json.JsonUtil;
 
@@ -66,7 +67,7 @@ public class RestaurantControllerTest extends AbstractControllerTest {
                 .with(userHttpBasic(ADMIN)))
                 .andDo(print())
                 .andExpect(status().isNoContent());
-        assertMatch(repository.getAll(), RESTAURANT_2);
+        assertMatch(RestaurantUtil.asTo(repository.getAll()), RESTAURANT_2);
     }
 
     @Test
@@ -78,23 +79,23 @@ public class RestaurantControllerTest extends AbstractControllerTest {
 
     @Test
     void testCreate() throws Exception {
-        Restaurant expected = new Restaurant(null, "restaurant_3", "Restaurant #3");
+        RestaurantTo expected = new RestaurantTo(null, "Restaurant #3");
         ResultActions action = mockMvc.perform(post(REST_URL)
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(userHttpBasic(ADMIN))
                 .content(JsonUtil.writeValue(expected)))
                 .andExpect(status().isCreated());
 
-        Restaurant returned = readFromJson(action, Restaurant.class);
+        RestaurantTo returned = readFromJson(action, RestaurantTo.class);
         expected.setId(returned.getId());
 
         assertMatch(returned, expected);
-        assertMatch(repository.getAll(), RESTAURANT_1, RESTAURANT_2, expected);
+        assertMatch(RestaurantUtil.asTo(repository.getAll()), RESTAURANT_1, RESTAURANT_2, expected);
     }
 
     @Test
     void testCreateInvalid() throws Exception {
-        Restaurant expected = new Restaurant(null, "", "Restaurant #3");
+        RestaurantTo expected = new RestaurantTo(null, null);
         mockMvc.perform(post(REST_URL)
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(userHttpBasic(ADMIN))
@@ -106,7 +107,7 @@ public class RestaurantControllerTest extends AbstractControllerTest {
 
     @Test
     void testCreateForbidden() throws Exception {
-        Restaurant expected = new Restaurant(null, "restaurant_3", "Restaurant #3");
+        RestaurantTo expected = new RestaurantTo(null, "Restaurant #3");
         mockMvc.perform(post(REST_URL)
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(userHttpBasic(USER))
@@ -116,8 +117,7 @@ public class RestaurantControllerTest extends AbstractControllerTest {
 
     @Test
     void testUpdate() throws Exception {
-        Restaurant updated = new Restaurant(RESTAURANT_1);
-        updated.setAlias("restaurant_4");
+        RestaurantTo updated = new RestaurantTo(RESTAURANT_1);
         updated.setName("Restaurant #4");
         mockMvc.perform(put(REST_URL + RESTAURANT_1_ID)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -125,13 +125,12 @@ public class RestaurantControllerTest extends AbstractControllerTest {
                 .content(JsonUtil.writeValue(updated)))
                 .andExpect(status().isNoContent());
 
-        assertMatch(repository.get(RESTAURANT_1_ID), updated);
+        assertMatch(RestaurantUtil.asTo(repository.get(RESTAURANT_1_ID)), updated);
     }
 
     @Test
     void testUpdateInvalid() throws Exception {
-        Restaurant updated = new Restaurant(RESTAURANT_1);
-        updated.setAlias("");
+        RestaurantTo updated = new RestaurantTo(RESTAURANT_1);
         updated.setName("");
         mockMvc.perform(put(REST_URL + RESTAURANT_1_ID)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -143,8 +142,7 @@ public class RestaurantControllerTest extends AbstractControllerTest {
 
     @Test
     void testUpdateForbidden() throws Exception {
-        Restaurant updated = new Restaurant(RESTAURANT_1);
-        updated.setAlias("restaurant_4");
+        RestaurantTo updated = new RestaurantTo(RESTAURANT_1);
         updated.setName("Restaurant #4");
         mockMvc.perform(put(REST_URL + RESTAURANT_1_ID)
                 .contentType(MediaType.APPLICATION_JSON)
