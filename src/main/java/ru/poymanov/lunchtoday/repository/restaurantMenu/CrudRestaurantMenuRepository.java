@@ -7,6 +7,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 import ru.poymanov.lunchtoday.model.RestaurantMenu;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,6 +22,9 @@ public interface CrudRestaurantMenuRepository extends JpaRepository<RestaurantMe
     List<RestaurantMenu> findAll();
 
     List<RestaurantMenu> findAllByRestaurantId(Integer restaurantId);
+
+    @Query("SELECT rm from RestaurantMenu rm WHERE rm.date BETWEEN :startDate AND :endDate ORDER BY rm.date DESC")
+    List<RestaurantMenu> findAllBetween(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate);
 
     @Transactional
     @Modifying

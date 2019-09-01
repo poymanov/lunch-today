@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import ru.poymanov.lunchtoday.model.RestaurantMenu;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
@@ -34,5 +35,10 @@ public class RestaurantMenuRepositoryImpl implements RestaurantMenuRepository {
     @Override
     public List<RestaurantMenu> getAllByRestaurant(int restaurantId) {
         return crudRepository.findAllByRestaurantId(restaurantId);
+    }
+
+    @Override
+    public List<RestaurantMenu> getAllBetween(LocalDateTime startDate, LocalDateTime endDate) {
+        return crudRepository.findAllBetween(startDate, endDate);
     }
 }

@@ -10,15 +10,13 @@ import ru.poymanov.lunchtoday.util.RestaurantMenuUtil;
 import ru.poymanov.lunchtoday.web.AbstractControllerTest;
 import ru.poymanov.lunchtoday.web.json.JsonUtil;
 
-import java.util.Collections;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static ru.poymanov.lunchtoday.RestaurantTestData.RESTAURANT_1_ID;
-import static ru.poymanov.lunchtoday.RestaurantTestData.RESTAURANT_2_ID;
 import static ru.poymanov.lunchtoday.TestUtil.readFromJson;
 import static ru.poymanov.lunchtoday.TestUtil.userHttpBasic;
 import static ru.poymanov.lunchtoday.UserTestData.USER;
@@ -42,7 +40,7 @@ public class RestaurantMenuControllerTest extends AbstractControllerTest {
                 .with(userHttpBasic(USER)))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(contentJsonAsList(MENU_1));
+                .andExpect(contentJson(MENU_3, MENU_4, MENU_1));
     }
 
     @Test
@@ -69,7 +67,7 @@ public class RestaurantMenuControllerTest extends AbstractControllerTest {
                 .with(userHttpBasic(ADMIN)))
                 .andDo(print())
                 .andExpect(status().isNoContent());
-        assertMatch(RestaurantMenuUtil.asTo(repository.getAllByRestaurant(RESTAURANT_1_ID)), Collections.emptyList());
+        assertMatch(RestaurantMenuUtil.asTo(repository.getAllByRestaurant(RESTAURANT_1_ID)), MENU_3, MENU_4);
     }
 
     @Test
@@ -92,7 +90,7 @@ public class RestaurantMenuControllerTest extends AbstractControllerTest {
         expected.setId(returned.getId());
 
         assertMatch(returned, expected);
-        assertMatch(RestaurantMenuUtil.asTo(repository.getAllByRestaurant(RESTAURANT_1_ID)), MENU_1, expected);
+        assertMatch(RestaurantMenuUtil.asTo(repository.getAllByRestaurant(RESTAURANT_1_ID)), MENU_3, MENU_4, MENU_1, expected);
     }
 
     @Test
@@ -120,7 +118,7 @@ public class RestaurantMenuControllerTest extends AbstractControllerTest {
     @Test
     void testUpdate() throws Exception {
         RestaurantMenuTo updated = new RestaurantMenuTo(MENU_1);
-        updated.setDate(new Date());
+        updated.setDate(LocalDateTime.now());
         mockMvc.perform(put(REST_URL_MENU_1)
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(userHttpBasic(ADMIN))
@@ -145,7 +143,7 @@ public class RestaurantMenuControllerTest extends AbstractControllerTest {
     @Test
     void testUpdateForbidden() throws Exception {
         RestaurantMenuTo updated = new RestaurantMenuTo(MENU_1);
-        updated.setDate(new Date());
+        updated.setDate(LocalDateTime.now());
         mockMvc.perform(put(REST_URL_MENU_1)
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(userHttpBasic(USER))

@@ -1,11 +1,8 @@
 package ru.poymanov.lunchtoday.to;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -13,8 +10,7 @@ public class RestaurantMenuTo extends BaseTo {
     @NotNull
     private Integer restaurantId;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    private Date date;
+    private LocalDateTime date;
 
     private List<RestaurantMenuItemTo> items = new ArrayList<>();
 
@@ -32,18 +28,18 @@ public class RestaurantMenuTo extends BaseTo {
         this.items = List.of(items);
     }
 
-    public RestaurantMenuTo(Integer id, Integer restaurantId, Date date) {
+    public RestaurantMenuTo(Integer id, Integer restaurantId, LocalDateTime date) {
         super(id);
         this.restaurantId = restaurantId;
         this.date = date;
     }
 
-    public RestaurantMenuTo(Integer id, Integer restaurantId, Date date, RestaurantMenuItemTo... items) {
+    public RestaurantMenuTo(Integer id, Integer restaurantId, LocalDateTime date, RestaurantMenuItemTo... items) {
         this(id, restaurantId, date);
         this.items = List.of(items);
     }
 
-    public RestaurantMenuTo(Integer id, Integer restaurantId, Date date, List<RestaurantMenuItemTo> items) {
+    public RestaurantMenuTo(Integer id, Integer restaurantId, LocalDateTime date, List<RestaurantMenuItemTo> items) {
         this(id, restaurantId, date);
         this.items = items;
     }
@@ -60,11 +56,11 @@ public class RestaurantMenuTo extends BaseTo {
         this.restaurantId = restaurantId;
     }
 
-    public Date getDate() {
+    public LocalDateTime getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(LocalDateTime date) {
         this.date = date;
     }
 

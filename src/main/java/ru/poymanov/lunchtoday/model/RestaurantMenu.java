@@ -5,7 +5,7 @@ import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -19,7 +19,7 @@ public class RestaurantMenu extends AbstractBaseEntity {
 
     @Column(name = "date", nullable = false, columnDefinition = "timestamp default now()")
     @NotNull
-    private Date date = new Date();
+    private LocalDateTime date = LocalDateTime.now();
 
     @OneToMany(mappedBy = "menu", fetch = FetchType.EAGER)
     private List<RestaurantMenuItem> items;
@@ -32,7 +32,7 @@ public class RestaurantMenu extends AbstractBaseEntity {
         this.restaurant = restaurant;
     }
 
-    public RestaurantMenu(Integer id, Restaurant restaurant, Date date) {
+    public RestaurantMenu(Integer id, Restaurant restaurant, LocalDateTime date) {
         this(id, restaurant);
         this.date = date;
     }
@@ -49,11 +49,11 @@ public class RestaurantMenu extends AbstractBaseEntity {
         this.restaurant = restaurant;
     }
 
-    public Date getDate() {
+    public LocalDateTime getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(LocalDateTime date) {
         this.date = date;
     }
 

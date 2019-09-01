@@ -15,9 +15,13 @@ import static ru.poymanov.lunchtoday.model.AbstractBaseEntity.START_SEQ;
 public class RestaurantMenuTestData {
     public static final int MENU_1_ID = START_SEQ + 4;
     public static final int MENU_2_ID = MENU_1_ID + 1;
+    public static final int MENU_3_ID = RestaurantMenuItemTestData.ITEM_4_ID + 1;
+    public static final int MENU_4_ID = RestaurantMenuItemTestData.ITEM_4_ID + 2;
 
     public static final RestaurantMenuTo MENU_1 = new RestaurantMenuTo(MENU_1_ID, RestaurantTestData.RESTAURANT_1_ID, RestaurantMenuItemTestData.ITEM_1, RestaurantMenuItemTestData.ITEM_2);
     public static final RestaurantMenuTo MENU_2 = new RestaurantMenuTo(MENU_2_ID, RestaurantTestData.RESTAURANT_2_ID, RestaurantMenuItemTestData.ITEM_3, RestaurantMenuItemTestData.ITEM_4);
+    public static final RestaurantMenuTo MENU_3 = new RestaurantMenuTo(MENU_3_ID, RestaurantTestData.RESTAURANT_1_ID);
+    public static final RestaurantMenuTo MENU_4 = new RestaurantMenuTo(MENU_4_ID, RestaurantTestData.RESTAURANT_1_ID);
 
     public static final String REST_URL_RESTAURANT_1 = RestaurantController.REST_URL + "/" + RESTAURANT_1_ID + "/menu";
     public static final String REST_URL_MENU_1 = REST_URL_RESTAURANT_1 + "/" + MENU_1_ID;
@@ -40,9 +44,5 @@ public class RestaurantMenuTestData {
 
     public static ResultMatcher contentJson(RestaurantMenuTo expected) {
         return result -> assertMatch(readFromJsonMvcResult(result, RestaurantMenuTo.class), expected);
-    }
-
-    public static ResultMatcher contentJsonAsList(RestaurantMenuTo expected) {
-        return result -> assertMatch(readListFromJsonMvcResult(result, RestaurantMenuTo.class), List.of(expected));
     }
 }
