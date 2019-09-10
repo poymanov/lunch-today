@@ -7,8 +7,8 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 @Entity
-@Table(name = "user_orders", uniqueConstraints = {@UniqueConstraint(columnNames = {"restaurant_menu_id", "user_id"}, name = "user_orders_idx")})
-public class UserOrder extends AbstractBaseEntity {
+@Table(name = "user_votes", uniqueConstraints = {@UniqueConstraint(columnNames = {"restaurant_menu_id", "user_id"}, name = "user_votes_idx")})
+public class UserVote extends AbstractBaseEntity {
     @OneToOne
     @JoinColumn(name = "restaurant_menu_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
@@ -21,11 +21,11 @@ public class UserOrder extends AbstractBaseEntity {
     @NotNull
     private User user;
 
-    public UserOrder() {
+    public UserVote() {
 
     }
 
-    public UserOrder(RestaurantMenu menu, User user) {
+    public UserVote(RestaurantMenu menu, User user) {
         this.menu = menu;
         this.user = user;
     }

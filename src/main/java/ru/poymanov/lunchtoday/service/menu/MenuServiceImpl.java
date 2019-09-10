@@ -4,12 +4,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.poymanov.lunchtoday.model.RestaurantMenu;
 import ru.poymanov.lunchtoday.model.User;
-import ru.poymanov.lunchtoday.model.UserOrder;
+import ru.poymanov.lunchtoday.model.UserVote;
 import ru.poymanov.lunchtoday.repository.restaurantMenu.RestaurantMenuRepository;
 import ru.poymanov.lunchtoday.repository.user.UserRepository;
-import ru.poymanov.lunchtoday.repository.userOrders.UserOrderRepository;
+import ru.poymanov.lunchtoday.repository.userVotes.UserVoteRepository;
 import ru.poymanov.lunchtoday.to.RestaurantMenuTo;
-import ru.poymanov.lunchtoday.to.UserOrderTo;
+import ru.poymanov.lunchtoday.to.UserVoteTo;
 import ru.poymanov.lunchtoday.util.RestaurantMenuUtil;
 import ru.poymanov.lunchtoday.util.exception.IllegalRequestDataException;
 import ru.poymanov.lunchtoday.web.SecurityUtil;
@@ -22,13 +22,13 @@ import java.util.List;
 @Service
 public class MenuServiceImpl implements MenuService {
     private final RestaurantMenuRepository menuRepository;
-    private final UserOrderRepository userOrderRepository;
+    private final UserVoteRepository userVoteRepository;
     private final UserRepository userRepository;
 
     @Autowired
-    public MenuServiceImpl(RestaurantMenuRepository repository, UserOrderRepository userOrderRepository, UserRepository userRepository) {
+    public MenuServiceImpl(RestaurantMenuRepository repository, UserVoteRepository userVoteRepository, UserRepository userRepository) {
         this.menuRepository = repository;
-        this.userOrderRepository = userOrderRepository;
+        this.userVoteRepository = userVoteRepository;
         this.userRepository = userRepository;
     }
 
@@ -39,21 +39,21 @@ public class MenuServiceImpl implements MenuService {
     }
 
     @Override
-    public UserOrderTo orderMenu(int id) {
+    public UserVoteTo voteMenu(int id) {
         RestaurantMenu menu = menuRepository.get(id);
 
         if (menu == null) {
             throw new IllegalRequestDataException("Menu not found");
         }
 
-        LocalDateTime orderDeadline = LocalDateTime.parse(LocalDate.now().toString() + "T11:00:00");
+        LocalDateTime voteDeadline = LocalDateTime.parse(LocalDate.now().toString() + "T11:00:00");
 
-        if (LocalDateTime.now().isAfter(orderDeadline)) {
-            throw new IllegalRequestDataException("Trying to order after 11:00");
+        if (LocalDateTime.now().isAfter(voteDeadline)) {
+            throw new IllegalRequestDataException("Trying to vote after 11:00");
         }
 
         User user = userRepository.get(SecurityUtil.authUserId());
-        UserOrder created = userOrderRepository.save(new UserOrder(menu, user));
-        return new UserOrderTo(created.getId(), menu.getId(), user.getId());
+        UserVote created = userVoteRepository.save(new UserVote(menu, user));
+        return new UserVoteTo(created.getId(), menu.getId(), user.getId());
     }
 }

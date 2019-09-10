@@ -12,7 +12,7 @@ import static ru.poymanov.lunchtoday.RestaurantMenuTestData.MENU_1_ID;
 import static ru.poymanov.lunchtoday.RestaurantMenuTestData.MENU_2_ID;
 import static ru.poymanov.lunchtoday.RestaurantMenuTestData.MENU_1;
 import static ru.poymanov.lunchtoday.RestaurantMenuTestData.MENU_2;
-import static ru.poymanov.lunchtoday.UserOrderTestData.*;
+import static ru.poymanov.lunchtoday.UserVoteTestData.*;
 import static ru.poymanov.lunchtoday.TestUtil.userHttpBasic;
 import static ru.poymanov.lunchtoday.UserTestData.USER;
 
@@ -35,18 +35,18 @@ public class MenuControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    void testOrderMenu() throws Exception {
+    void testVoteMenu() throws Exception {
         mockTime("09");
         mockMvc.perform(post(REST_URL + "/" + MENU_1_ID)
                 .with(userHttpBasic(USER)))
                 .andExpect(status().isCreated())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andDo(print())
-                .andExpect(contentJson(ORDER));
+                .andExpect(contentJson(VOTE));
     }
 
     @Test
-    void testOrderNotExistedMenu() throws Exception {
+    void testVoteNotExistedMenu() throws Exception {
         mockTime("09");
         mockMvc.perform(post(REST_URL + "/" + 999)
                 .with(userHttpBasic(USER)))
@@ -56,7 +56,7 @@ public class MenuControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    void testOrderMenuAgainBefore11() throws Exception {
+    void testVoteMenuAgainBefore11() throws Exception {
         mockTime("09");
 
         mockMvc.perform(post(REST_URL + "/" + MENU_1_ID)
@@ -69,11 +69,11 @@ public class MenuControllerTest extends AbstractControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andDo(print())
-                .andExpect(contentJson(ORDER_2));
+                .andExpect(contentJson(VOTE_2));
     }
 
     @Test
-    void testOrderMenuAgainAfter11() throws Exception {
+    void testVoteMenuAgainAfter11() throws Exception {
         mockTime("09");
 
         mockMvc.perform(post(REST_URL + "/" + MENU_1_ID)

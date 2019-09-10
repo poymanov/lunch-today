@@ -2,16 +2,16 @@ package ru.poymanov.lunchtoday.to;
 
 import java.util.Objects;
 
-public class UserOrderTo extends BaseTo {
+public class UserVoteTo extends BaseTo {
     private Integer restaurantId;
 
     private Integer userId;
 
-    public UserOrderTo() {
+    public UserVoteTo() {
 
     }
 
-    public UserOrderTo(Integer id, Integer restaurantId, Integer userId) {
+    public UserVoteTo(Integer id, Integer restaurantId, Integer userId) {
         super(id);
         this.restaurantId = restaurantId;
         this.userId = userId;
@@ -37,7 +37,7 @@ public class UserOrderTo extends BaseTo {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        UserOrderTo that = (UserOrderTo) o;
+        UserVoteTo that = (UserVoteTo) o;
         return restaurantId.equals(that.restaurantId) &&
                 userId.equals(that.userId);
     }
@@ -49,7 +49,7 @@ public class UserOrderTo extends BaseTo {
 
     @Override
     public String toString() {
-        return "UserOrderTo{" +
+        return "UserVoteTo{" +
                 "restaurantId=" + restaurantId +
                 ", userId=" + userId +
                 ", id=" + id +

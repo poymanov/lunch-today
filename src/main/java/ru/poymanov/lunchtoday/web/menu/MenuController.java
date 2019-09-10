@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.poymanov.lunchtoday.service.menu.MenuService;
 import ru.poymanov.lunchtoday.to.RestaurantMenuTo;
-import ru.poymanov.lunchtoday.to.UserOrderTo;
+import ru.poymanov.lunchtoday.to.UserVoteTo;
 
 import java.net.URI;
 import java.util.List;
@@ -26,12 +26,12 @@ public class MenuController {
     }
 
     @PostMapping(value = "/{id}")
-    public ResponseEntity<UserOrderTo> createWithLocation(@PathVariable int id) {
-        UserOrderTo order = service.orderMenu(id);
+    public ResponseEntity<UserVoteTo> createWithLocation(@PathVariable int id) {
+        UserVoteTo vote = service.voteMenu(id);
 
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path(REST_URL + "/{id}")
-                .buildAndExpand(order.getId()).toUri();
-        return ResponseEntity.created(uriOfNewResource).body(order);
+                .buildAndExpand(vote.getId()).toUri();
+        return ResponseEntity.created(uriOfNewResource).body(vote);
     }
 }

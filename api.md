@@ -118,7 +118,7 @@ PUT /rest/admin/users/{id}
 GET /rest/admin/users/by
 
 {
-    "email": "",
+    "email": ""
 }
 ```
 
@@ -142,7 +142,7 @@ GET /rest/restaurants/{id}
 POST /rest/restaurants
 
 {
-    "name": "",
+    "name": ""
 }
 ```
 
@@ -152,7 +152,7 @@ POST /rest/restaurants
 PUT /rest/restaurants/{id}
 
 {
-    "name": "",
+    "name": ""
 }
 ```
 
@@ -182,7 +182,7 @@ GET /rest/restaurants/{id}/menu/{menu_id}
 POST /rest/restaurants/{id}/menu/
 
 {
-    "restaurantId": "",
+    "restaurantId": ""
 }
 ```
 
@@ -192,7 +192,7 @@ POST /rest/restaurants/{id}/menu/
 PUT /rest/restaurants/{id}/menu/{menu_id}
 
 {
-    "restaurantId": "",
+    "restaurantId": ""
 }
 ```
 
