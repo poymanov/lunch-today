@@ -36,7 +36,7 @@ public class MenuControllerTest extends AbstractControllerTest {
 
     @Test
     void testVoteMenu() throws Exception {
-        mockTime("09");
+        mockTime(9);
         mockMvc.perform(post(REST_URL + "/" + MENU_1_ID)
                 .with(userHttpBasic(USER)))
                 .andExpect(status().isCreated())
@@ -47,7 +47,7 @@ public class MenuControllerTest extends AbstractControllerTest {
 
     @Test
     void testVoteNotExistedMenu() throws Exception {
-        mockTime("09");
+        mockTime(9);
         mockMvc.perform(post(REST_URL + "/" + 999)
                 .with(userHttpBasic(USER)))
                 .andExpect(status().isUnprocessableEntity())
@@ -57,12 +57,12 @@ public class MenuControllerTest extends AbstractControllerTest {
 
     @Test
     void testVoteMenuAgainBefore11() throws Exception {
-        mockTime("09");
+        mockTime(9);
 
         mockMvc.perform(post(REST_URL + "/" + MENU_1_ID)
                 .with(userHttpBasic(USER)));
 
-        mockTime("10");
+        mockTime(10);
 
         mockMvc.perform(post(REST_URL + "/" + MENU_2_ID)
                 .with(userHttpBasic(USER)))
@@ -74,15 +74,27 @@ public class MenuControllerTest extends AbstractControllerTest {
 
     @Test
     void testVoteMenuAgainAfter11() throws Exception {
-        mockTime("09");
+        mockTime(9);
 
         mockMvc.perform(post(REST_URL + "/" + MENU_1_ID)
                 .with(userHttpBasic(USER)));
 
-        mockTime("12");
+        mockTime(12);
 
         mockMvc.perform(post(REST_URL + "/" + MENU_2_ID)
                 .with(userHttpBasic(USER)))
                 .andExpect(status().isUnprocessableEntity());
+    }
+
+    @Test
+    void testVoteMenuAfter11() throws Exception {
+        mockTime(12);
+
+        mockMvc.perform(post(REST_URL + "/" + MENU_2_ID)
+                .with(userHttpBasic(USER)))
+                .andExpect(status().isCreated())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(contentJson(VOTE_2));
     }
 }

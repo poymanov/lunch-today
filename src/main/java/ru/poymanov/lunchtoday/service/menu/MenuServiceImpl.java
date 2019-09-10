@@ -7,7 +7,7 @@ import ru.poymanov.lunchtoday.model.User;
 import ru.poymanov.lunchtoday.model.UserVote;
 import ru.poymanov.lunchtoday.repository.restaurantMenu.CrudRestaurantMenuRepository;
 import ru.poymanov.lunchtoday.repository.user.UserRepository;
-import ru.poymanov.lunchtoday.repository.userVotes.UserVoteRepository;
+import ru.poymanov.lunchtoday.repository.userVotes.CrudUserVoteRepository;
 import ru.poymanov.lunchtoday.to.RestaurantMenuTo;
 import ru.poymanov.lunchtoday.to.UserVoteTo;
 import ru.poymanov.lunchtoday.util.RestaurantMenuUtil;
@@ -22,11 +22,11 @@ import java.util.List;
 @Service
 public class MenuServiceImpl implements MenuService {
     private final CrudRestaurantMenuRepository menuRepository;
-    private final UserVoteRepository userVoteRepository;
+    private final CrudUserVoteRepository userVoteRepository;
     private final UserRepository userRepository;
 
     @Autowired
-    public MenuServiceImpl(CrudRestaurantMenuRepository repository, UserVoteRepository userVoteRepository, UserRepository userRepository) {
+    public MenuServiceImpl(CrudRestaurantMenuRepository repository, CrudUserVoteRepository userVoteRepository, UserRepository userRepository) {
         this.menuRepository = repository;
         this.userVoteRepository = userVoteRepository;
         this.userRepository = userRepository;
@@ -46,13 +46,18 @@ public class MenuServiceImpl implements MenuService {
             throw new IllegalRequestDataException("Menu not found");
         }
 
-        LocalDateTime voteDeadline = LocalDateTime.parse(LocalDate.now().toString() + "T11:00:00");
+        User user = new User();
+        user.setId(SecurityUtil.authUserId());
 
-        if (LocalDateTime.now().isAfter(voteDeadline)) {
-            throw new IllegalRequestDataException("Trying to vote after 11:00");
+        List<UserVote> votes = userVoteRepository.findByUserIdBetween(user.getId(), LocalDateTime.of(LocalDate.now(), LocalTime.MIN), LocalDateTime.of(LocalDate.now(), LocalTime.MAX));
+
+        if (votes.size() > 0) {
+            if (LocalTime.now().isAfter(LocalTime.of(11, 0))) {
+                throw new IllegalRequestDataException("Trying to vote after 11:00");
+            }
         }
 
-        User user = userRepository.get(SecurityUtil.authUserId());
+
         UserVote created = userVoteRepository.save(new UserVote(menu, user));
         return new UserVoteTo(created.getId(), menu.getId(), user.getId());
     }

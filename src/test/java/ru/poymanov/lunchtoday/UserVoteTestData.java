@@ -36,12 +36,11 @@ public class UserVoteTestData {
         return result -> assertMatch(readFromJsonMvcResult(result, UserVoteTo.class), expected);
     }
 
-    public static void mockTime(String hour) {
-        Clock clock = Clock.fixed(Instant.parse(LocalDate.now().toString() + "T" + hour + ":00:00.00Z"), ZoneId.of("UTC"));
-        new MockUp<LocalDateTime>() {
+    public static void mockTime(int hour) {
+        new MockUp<LocalTime>() {
             @Mock
-            public LocalDateTime now() {
-                return LocalDateTime.now(clock);
+            public LocalTime now() {
+                return LocalTime.of(hour, 0);
             }
         };
     }
