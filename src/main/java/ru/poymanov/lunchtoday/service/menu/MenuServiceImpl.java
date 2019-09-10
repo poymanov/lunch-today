@@ -57,7 +57,6 @@ public class MenuServiceImpl implements MenuService {
             }
         }
 
-
         UserVote created = userVoteRepository.save(new UserVote(menu, user));
         return new UserVoteTo(created.getId(), menu.getId(), user.getId());
     }

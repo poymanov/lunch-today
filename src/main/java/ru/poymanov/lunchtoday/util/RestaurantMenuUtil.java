@@ -1,6 +1,5 @@
 package ru.poymanov.lunchtoday.util;
 
-import ru.poymanov.lunchtoday.model.Restaurant;
 import ru.poymanov.lunchtoday.model.RestaurantMenu;
 import ru.poymanov.lunchtoday.to.RestaurantMenuItemTo;
 import ru.poymanov.lunchtoday.to.RestaurantMenuTo;
@@ -19,12 +18,5 @@ public class RestaurantMenuUtil {
             List<RestaurantMenuItemTo> items = el.getItems() != null ? RestaurantMenuItemUtil.asTo(el.getItems()) : new ArrayList<>();
             return new RestaurantMenuTo(el.getId(), el.getRestaurant().getId(), el.getDate(), items);
         }).collect(Collectors.toList());
-    }
-
-    public static RestaurantMenu updateFromTo(RestaurantMenu existedMenu, RestaurantMenuTo menu, Restaurant restaurant) {
-        existedMenu.setDate(menu.getDate());
-        existedMenu.setRestaurant(restaurant);
-
-        return existedMenu;
     }
 }

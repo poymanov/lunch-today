@@ -17,6 +17,7 @@ import ru.poymanov.lunchtoday.to.RestaurantMenuTo;
 import ru.poymanov.lunchtoday.util.RestaurantMenuUtil;
 import ru.poymanov.lunchtoday.web.restaurant.RestaurantController;
 
+import javax.transaction.Transactional;
 import java.net.URI;
 import java.util.List;
 
@@ -72,12 +73,16 @@ public class RestaurantMenuController {
     @Secured("ROLE_ADMIN")
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
+    @Transactional
     public void update(@Validated(View.Web.class) @RequestBody RestaurantMenuTo menu, @PathVariable int restaurantId, @PathVariable int id) {
         assureIdConsistent(menu, id);
 
         RestaurantMenu existedMenu = checkNotFoundWithId(repository.findById(id).orElse(null), id);
-        Restaurant restaurant = checkNotFoundWithId(repositoryRestaurant.findById(restaurantId).orElse(null), restaurantId);
+        Restaurant restaurant = new Restaurant(restaurantId, null);
 
-        checkNotFoundWithId(repository.save(RestaurantMenuUtil.updateFromTo(existedMenu, menu, restaurant)), menu.getId());
+        existedMenu.setRestaurant(restaurant);
+        existedMenu.setDate(menu.getDate());
+
+        checkNotFoundWithId(repository.save(existedMenu), menu.getId());
     }
 }

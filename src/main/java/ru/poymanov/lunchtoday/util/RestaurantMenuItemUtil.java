@@ -19,12 +19,4 @@ public class RestaurantMenuItemUtil {
     public static RestaurantMenuItem createNewFromTo(RestaurantMenuItemTo newItem, RestaurantMenu menu) {
         return new RestaurantMenuItem(null, newItem.getName(), menu, newItem.getPrice());
     }
-
-    public static RestaurantMenuItem updateFromTo(RestaurantMenuItem existedItem, RestaurantMenuItemTo item, RestaurantMenu menu) {
-        existedItem.setName(item.getName());
-        existedItem.setMenu(menu);
-        existedItem.setPrice(item.getPrice());
-
-        return existedItem;
-    }
 }
