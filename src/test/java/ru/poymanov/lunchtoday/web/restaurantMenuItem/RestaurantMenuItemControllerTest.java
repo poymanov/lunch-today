@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
-import ru.poymanov.lunchtoday.repository.restaurantMenuItem.RestaurantMenuItemRepository;
+import ru.poymanov.lunchtoday.repository.restaurantMenuItem.CrudRestaurantMenuItemRepository;
 import ru.poymanov.lunchtoday.to.RestaurantMenuItemTo;
 import ru.poymanov.lunchtoday.util.RestaurantMenuItemUtil;
 import ru.poymanov.lunchtoday.web.AbstractControllerTest;
@@ -24,7 +24,7 @@ import static ru.poymanov.lunchtoday.util.exception.ErrorType.VALIDATION_ERROR;
 
 public class RestaurantMenuItemControllerTest extends AbstractControllerTest {
     @Autowired
-    private RestaurantMenuItemRepository repository;
+    private CrudRestaurantMenuItemRepository repository;
 
     @Test
     void testGetUnAuth() throws Exception {
@@ -65,7 +65,7 @@ public class RestaurantMenuItemControllerTest extends AbstractControllerTest {
                 .with(userHttpBasic(ADMIN)))
                 .andDo(print())
                 .andExpect(status().isNoContent());
-        assertMatch(RestaurantMenuItemUtil.asTo(repository.getAllByMenu(MENU_1_ID)), ITEM_2);
+        assertMatch(RestaurantMenuItemUtil.asTo(repository.findAllByMenuId(MENU_1_ID)), ITEM_2);
     }
 
     @Test
@@ -88,7 +88,7 @@ public class RestaurantMenuItemControllerTest extends AbstractControllerTest {
         expected.setId(returned.getId());
 
         assertMatch(returned, expected);
-        assertMatch(RestaurantMenuItemUtil.asTo(repository.getAllByMenu(MENU_1_ID)), ITEM_1, ITEM_2, expected);
+        assertMatch(RestaurantMenuItemUtil.asTo(repository.findAllByMenuId(MENU_1_ID)), ITEM_1, ITEM_2, expected);
     }
 
     @Test
@@ -123,7 +123,7 @@ public class RestaurantMenuItemControllerTest extends AbstractControllerTest {
                 .content(JsonUtil.writeValue(updated)))
                 .andExpect(status().isNoContent());
 
-        assertMatch(RestaurantMenuItemUtil.asTo(repository.getByMenu(ITEM_1_ID, MENU_1_ID)), updated);
+        assertMatch(RestaurantMenuItemUtil.asTo(repository.findByIdAndMenuId(ITEM_1_ID, MENU_1_ID).orElse(null)), updated);
     }
 
     @Test

@@ -11,7 +11,7 @@ import java.util.List;
 @Entity
 @Table(name = "restaurant_menu", uniqueConstraints = {@UniqueConstraint(columnNames = {"restaurant_id", "date"}, name = "restaurant_menu_idx")})
 public class RestaurantMenu extends AbstractBaseEntity {
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "restaurant_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @NotNull

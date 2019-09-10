@@ -11,8 +11,8 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.poymanov.lunchtoday.View;
 import ru.poymanov.lunchtoday.model.RestaurantMenu;
 import ru.poymanov.lunchtoday.model.RestaurantMenuItem;
-import ru.poymanov.lunchtoday.repository.restaurantMenu.RestaurantMenuRepository;
-import ru.poymanov.lunchtoday.repository.restaurantMenuItem.RestaurantMenuItemRepository;
+import ru.poymanov.lunchtoday.repository.restaurantMenu.CrudRestaurantMenuRepository;
+import ru.poymanov.lunchtoday.repository.restaurantMenuItem.CrudRestaurantMenuItemRepository;
 import ru.poymanov.lunchtoday.to.RestaurantMenuItemTo;
 import ru.poymanov.lunchtoday.util.RestaurantMenuItemUtil;
 import ru.poymanov.lunchtoday.web.restaurantMenu.RestaurantMenuController;
@@ -27,24 +27,24 @@ import static ru.poymanov.lunchtoday.util.ValidationUtil.*;
 public class RestaurantMenuItemController {
     public static final String REST_URL = RestaurantMenuController.REST_URL + "/{menuId}/items";
 
-    private final RestaurantMenuItemRepository repository;
+    private final CrudRestaurantMenuItemRepository repository;
 
-    private final RestaurantMenuRepository repositoryMenu;
+    private final CrudRestaurantMenuRepository repositoryMenu;
 
     @Autowired
-    public RestaurantMenuItemController(RestaurantMenuItemRepository repository, RestaurantMenuRepository repositoryMenu) {
+    public RestaurantMenuItemController(CrudRestaurantMenuItemRepository repository, CrudRestaurantMenuRepository repositoryMenu) {
         this.repository = repository;
         this.repositoryMenu = repositoryMenu;
     }
 
     @GetMapping
     public List<RestaurantMenuItemTo> getAll(@PathVariable int menuId) {
-        return RestaurantMenuItemUtil.asTo(repository.getAllByMenu(menuId));
+        return RestaurantMenuItemUtil.asTo(repository.findAllByMenuId(menuId));
     }
 
     @GetMapping("/{id}")
     public RestaurantMenuItemTo get(@PathVariable int id, @PathVariable int menuId) {
-        RestaurantMenuItem item = checkNotFoundWithId(repository.getByMenu(id, menuId), id);
+        RestaurantMenuItem item = checkNotFoundWithId(repository.findByIdAndMenuId(id, menuId).orElse(null), id);
         return RestaurantMenuItemUtil.asTo(item);
     }
 
@@ -60,7 +60,7 @@ public class RestaurantMenuItemController {
     public ResponseEntity<RestaurantMenuItemTo> createWithLocation(@Validated(View.Web.class) @RequestBody RestaurantMenuItemTo item, @PathVariable int menuId) {
         checkNew(item);
 
-        RestaurantMenu menu = checkNotFoundWithId(repositoryMenu.get(menuId), menuId);
+        RestaurantMenu menu = checkNotFoundWithId(repositoryMenu.findById(menuId).orElse(null), menuId);
         repository.save(RestaurantMenuItemUtil.createNewFromTo(item, menu));
 
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
@@ -75,8 +75,8 @@ public class RestaurantMenuItemController {
     public void update(@Validated(View.Web.class) @RequestBody RestaurantMenuItemTo item, @PathVariable int id, @PathVariable int menuId) {
         assureIdConsistent(item, id);
 
-        RestaurantMenuItem existedItem = checkNotFoundWithId(repository.get(id), id);
-        RestaurantMenu menu = checkNotFoundWithId(repositoryMenu.get(menuId), menuId);
+        RestaurantMenuItem existedItem = checkNotFoundWithId(repository.findById(id).orElse(null), id);
+        RestaurantMenu menu = checkNotFoundWithId(repositoryMenu.findById(menuId).orElse(null), menuId);
 
         checkNotFoundWithId(repository.save(RestaurantMenuItemUtil.updateFromTo(existedItem, item, menu)), item.getId());
     }

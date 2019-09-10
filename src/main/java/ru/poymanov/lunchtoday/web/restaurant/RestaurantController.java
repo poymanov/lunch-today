@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.poymanov.lunchtoday.View;
 import ru.poymanov.lunchtoday.model.Restaurant;
-import ru.poymanov.lunchtoday.repository.restaurant.RestaurantRepository;
+import ru.poymanov.lunchtoday.repository.restaurant.CrudRestaurantRepository;
 import ru.poymanov.lunchtoday.to.RestaurantTo;
 import ru.poymanov.lunchtoday.util.RestaurantUtil;
 
@@ -24,21 +24,21 @@ import static ru.poymanov.lunchtoday.util.ValidationUtil.*;
 public class RestaurantController {
     public static final String REST_URL = "/rest/restaurants";
 
-    private final RestaurantRepository repository;
+    private final CrudRestaurantRepository repository;
 
     @Autowired
-    public RestaurantController(RestaurantRepository repository) {
+    public RestaurantController(CrudRestaurantRepository repository) {
         this.repository = repository;
     }
 
     @GetMapping
     public List<RestaurantTo> getAll() {
-        return RestaurantUtil.asTo(repository.getAll());
+        return RestaurantUtil.asTo(repository.findAll());
     }
 
     @GetMapping("/{id}")
     public RestaurantTo get(@PathVariable int id) {
-        Restaurant restaurant = checkNotFoundWithId(repository.get(id), id);
+        Restaurant restaurant = checkNotFoundWithId(repository.findById(id).orElse(null), id);
         return RestaurantUtil.asTo(restaurant);
     }
 
@@ -69,7 +69,7 @@ public class RestaurantController {
     public void update(@Validated(View.Web.class) @RequestBody RestaurantTo restaurant, @PathVariable int id) {
         assureIdConsistent(restaurant, id);
 
-        Restaurant existedItem = checkNotFoundWithId(repository.get(id), id);
+        Restaurant existedItem = checkNotFoundWithId(repository.findById(id).orElse(null), id);
 
         checkNotFoundWithId(repository.save(RestaurantUtil.updateFromTo(existedItem, restaurant)), restaurant.getId());
     }

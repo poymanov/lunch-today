@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
-import ru.poymanov.lunchtoday.repository.restaurant.RestaurantRepository;
+import ru.poymanov.lunchtoday.repository.restaurant.CrudRestaurantRepository;
 import ru.poymanov.lunchtoday.to.RestaurantTo;
 import ru.poymanov.lunchtoday.util.RestaurantUtil;
 import ru.poymanov.lunchtoday.web.AbstractControllerTest;
@@ -26,7 +26,7 @@ public class RestaurantControllerTest extends AbstractControllerTest {
     private static final String REST_URL = RestaurantController.REST_URL + '/';
 
     @Autowired
-    private RestaurantRepository repository;
+    private CrudRestaurantRepository repository;
 
     @Test
     void testGetUnAuth() throws Exception {
@@ -67,7 +67,7 @@ public class RestaurantControllerTest extends AbstractControllerTest {
                 .with(userHttpBasic(ADMIN)))
                 .andDo(print())
                 .andExpect(status().isNoContent());
-        assertMatch(RestaurantUtil.asTo(repository.getAll()), RESTAURANT_2);
+        assertMatch(RestaurantUtil.asTo(repository.findAll()), RESTAURANT_2);
     }
 
     @Test
@@ -90,7 +90,7 @@ public class RestaurantControllerTest extends AbstractControllerTest {
         expected.setId(returned.getId());
 
         assertMatch(returned, expected);
-        assertMatch(RestaurantUtil.asTo(repository.getAll()), RESTAURANT_1, RESTAURANT_2, expected);
+        assertMatch(RestaurantUtil.asTo(repository.findAll()), RESTAURANT_1, RESTAURANT_2, expected);
     }
 
     @Test
@@ -125,7 +125,7 @@ public class RestaurantControllerTest extends AbstractControllerTest {
                 .content(JsonUtil.writeValue(updated)))
                 .andExpect(status().isNoContent());
 
-        assertMatch(RestaurantUtil.asTo(repository.get(RESTAURANT_1_ID)), updated);
+        assertMatch(RestaurantUtil.asTo(repository.findById(RESTAURANT_1_ID).orElse(null)), updated);
     }
 
     @Test
